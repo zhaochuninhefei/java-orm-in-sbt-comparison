@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 /**
  * 用户基础信息 Repository
  */
+@SuppressWarnings({"NullableProblems", "unused"})
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
 }

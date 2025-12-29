@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 /**
  * 地区 Repository
  */
+@SuppressWarnings({"NullableProblems", "unused"})
 @Repository
 public interface RegionRepository extends JpaRepository<Region, Long> {
 }

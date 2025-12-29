@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
  * 对应表：product_category
  * 数据量：100
  */
+@SuppressWarnings({"unused"})
 @Setter
 @Getter
 @NoArgsConstructor

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 /**
  * 商品分类 Repository
  */
+@SuppressWarnings({"NullableProblems", "unused"})
 @Repository
 public interface ProductCategoryRepository extends JpaRepository<ProductCategory, Long> {
 }

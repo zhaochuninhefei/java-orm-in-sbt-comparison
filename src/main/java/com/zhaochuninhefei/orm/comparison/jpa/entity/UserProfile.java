@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
  * 数据量：10万
  * 用途：场景1-4（单表插入、批量插入、主键更新、批量更新）
  */
+@SuppressWarnings({"unused"})
 @Setter
 @Getter
 @NoArgsConstructor

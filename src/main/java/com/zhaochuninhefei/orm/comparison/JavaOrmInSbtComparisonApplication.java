@@ -6,7 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class JavaOrmInSbtComparisonApplication {
 
-	public static void main(String[] args) {
+    private JavaOrmInSbtComparisonApplication() {}
+
+	static void main(String[] args) {
 		SpringApplication.run(JavaOrmInSbtComparisonApplication.class, args);
 	}
 

@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
  * 对应表：order_main
  * 数据量：100万
  */
+@SuppressWarnings({"unused"})
 @Setter
 @Getter
 @NoArgsConstructor

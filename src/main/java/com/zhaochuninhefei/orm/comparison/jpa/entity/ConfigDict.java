@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
  * 数据量：1000
  * 用途：场景6（全表查询）
  */
+@SuppressWarnings({"unused"})
 @Setter
 @Getter
 @NoArgsConstructor

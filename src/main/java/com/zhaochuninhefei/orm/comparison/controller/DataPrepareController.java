@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/data")
+@SuppressWarnings({"NullableProblems", "unused"})
 public class DataPrepareController {
 
     private final DataPrepareService dataPrepareService;

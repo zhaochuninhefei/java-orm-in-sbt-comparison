@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 /**
  * 订单明细 Repository
  */
+@SuppressWarnings({"NullableProblems", "unused"})
 @Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> {
 }

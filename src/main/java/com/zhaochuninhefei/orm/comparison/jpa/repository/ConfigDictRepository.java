@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 /**
  * 配置字典 Repository
  */
+@SuppressWarnings({"NullableProblems", "unused"})
 @Repository
 public interface ConfigDictRepository extends JpaRepository<ConfigDict, Long> {
 }

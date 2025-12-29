@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
  * 对应表：customer
  * 数据量：10万
  */
+@SuppressWarnings({"unused"})
 @Setter
 @Getter
 @NoArgsConstructor
