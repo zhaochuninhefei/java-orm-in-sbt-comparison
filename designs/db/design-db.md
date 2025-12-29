@@ -1,17 +1,26 @@
 DB设计
 ==========
 
+# SQL文件
+- designs/db/ddl-mysql.sql
+- designs/db/dml-mysql.sql
+
+# DB说明
+
 ## 场景1-4：用户信息表
 - table :  user_profile
 
-参考: designs/db-mysql.sql 的 user_profile
+参考: designs/db/ddl-mysql.sql 的 user_profile
 
 ## 场景6: 字典表
 - table :  config_dict
 
-参考: designs/db-mysql.sql 的 config_dict
+参考: designs/db/ddl-mysql.sql 的 config_dict
 
 ## 场景5：分页查询 - ER关系设计
+- table : order_main, order_detail, customer, product, product_category, region
+
+参考: designs/db/ddl-mysql.sql 的 order_main, order_detail, customer, product, product_category, region
 
 ### 表列表
 
