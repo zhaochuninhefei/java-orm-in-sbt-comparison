@@ -153,4 +153,4 @@ LIMIT 100 OFFSET 0;
 - request body: null
 - response body: 各张表的数据量
 - 描述：基于`比较场景`与`DB设计`，为每张表生成对应的数据。(每张表的数据量，以及各个表之间的关系，参考`designs/db/design-db.md`文档)
-
+- 技术栈: JPA + MySQL + SpringBoot
