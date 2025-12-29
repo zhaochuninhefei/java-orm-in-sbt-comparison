@@ -154,3 +154,9 @@ LIMIT 100 OFFSET 0;
 - response body: 各张表的数据量
 - 描述：基于`比较场景`与`DB设计`，为每张表生成对应的数据。(每张表的数据量，以及各个表之间的关系，参考`designs/db/design-db.md`文档)
 - 技术栈: JPA + MySQL + SpringBoot
+
+### 包与类设计
+- controller: com.zhaochuninhefei.orm.comparison.controller.DataPrepareController
+- service: com.zhaochuninhefei.orm.comparison.service.DataPrepareService
+- repository: com.zhaochuninhefei.orm.comparison.jpa.repository
+- entity: com.zhaochuninhefei.orm.comparison.jpa.entity
