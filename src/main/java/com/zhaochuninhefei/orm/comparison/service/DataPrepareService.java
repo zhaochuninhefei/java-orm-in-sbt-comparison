@@ -17,6 +17,7 @@ import com.zhaochuninhefei.orm.comparison.jpa.repository.ProductCategoryReposito
 import com.zhaochuninhefei.orm.comparison.jpa.repository.ProductRepository;
 import com.zhaochuninhefei.orm.comparison.jpa.repository.RegionRepository;
 import com.zhaochuninhefei.orm.comparison.jpa.repository.UserProfileRepository;
+import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,8 @@ public class DataPrepareService {
     private final OrderMainRepository orderMainRepository;
     private final OrderDetailRepository orderDetailRepository;
 
+    private final EntityManager entityManager;
+
     private final Random random = new Random();
 
     private static final String[] DEPARTMENTS = {"研发部", "产品部", "市场部", "销售部", "人力资源部", "财务部", "运营部", "客服部"};
@@ -64,7 +67,8 @@ public class DataPrepareService {
                               ConfigDictRepository configDictRepository,
                               ProductRepository productRepository,
                               OrderMainRepository orderMainRepository,
-                              OrderDetailRepository orderDetailRepository) {
+                              OrderDetailRepository orderDetailRepository,
+                              EntityManager entityManager) {
         this.userProfileRepository = userProfileRepository;
         this.customerRepository = customerRepository;
         this.productCategoryRepository = productCategoryRepository;
@@ -73,6 +77,7 @@ public class DataPrepareService {
         this.productRepository = productRepository;
         this.orderMainRepository = orderMainRepository;
         this.orderDetailRepository = orderDetailRepository;
+        this.entityManager = entityManager;
     }
 
     /**
@@ -81,6 +86,9 @@ public class DataPrepareService {
     @Transactional
     public DataPrepareResponse prepareAllData() {
         log.info("开始准备测试数据...");
+
+        // 在插入新数据前先清空所有相关表
+        truncateAllTables();
 
         Map<String, Integer> tableCounts = new LinkedHashMap<>();
 
@@ -126,6 +134,29 @@ public class DataPrepareService {
 
         log.info("所有测试数据准备完成！");
         return new DataPrepareResponse("数据准备完成", tableCounts);
+    }
+
+    /**
+     * 使用TRUNCATE清空所有表数据
+     */
+    private void truncateAllTables() {
+        // 由于TRUNCATE不遵循外键约束，需要按正确的顺序执行
+        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate(); // 临时禁用外键检查
+
+        entityManager.createNativeQuery("TRUNCATE TABLE user_profile").executeUpdate();
+
+        entityManager.createNativeQuery("TRUNCATE TABLE order_detail").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE order_main").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE product").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE customer").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE region").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE product_category").executeUpdate();
+
+        entityManager.createNativeQuery("TRUNCATE TABLE config_dict").executeUpdate();
+
+        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate(); // 重新启用外键检查
+
+        log.info("已清空所有相关表数据（使用TRUNCATE）");
     }
 
     /**

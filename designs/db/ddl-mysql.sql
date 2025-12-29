@@ -77,7 +77,7 @@ CREATE TABLE order_detail (
     discount DECIMAL(5,2) DEFAULT 0.00 COMMENT '折扣',
     actual_price DECIMAL(12,2) NOT NULL COMMENT '实际价格',
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    UNIQUE KEY uk_order_product (order_id, product_id) COMMENT '同一订单同一商品唯一',
+    INDEX idx_order_id (order_id),
     INDEX idx_product_id (product_id),
     INDEX idx_product_sku (product_sku)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单明细表';

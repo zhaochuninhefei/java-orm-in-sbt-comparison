@@ -1,3 +1,28 @@
+server:
+  port: 28080
+
 spring:
   application:
     name: java-orm-in-sbt-comparison
+  datasource:
+    url: jdbc:mysql://localhost:3307/orm_comparison_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true&rewriteBatchedStatements=true
+    username: zhaochun1
+    password: zhaochun@GITHUB
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      auto-commit: "${java_orm_in_sbt_comparison_hikari_auto_commit:true}"
+      connection-test-query: "${java_orm_in_sbt_comparison_hikari_connection_test_query:SELECT 1}"
+      connection-timeout: "${java_orm_in_sbt_comparison_hikari_connection_timeout:300000}"
+      idle-timeout: "${java_orm_in_sbt_comparison_hikari_idle_timeout:180000}"
+      max-lifetime: "${java_orm_in_sbt_comparison_hikari_max_lifetime:1800000}"
+      maximum-pool-size: "${java_orm_in_sbt_comparison_hikari_maximum_pool_size:100}"
+      minimum-idle: "${java_orm_in_sbt_comparison_hikari_minimum_idle:5}"
+      pool-name: "${java_orm_in_sbt_comparison_hikari_pool_name:HikariCP-java-orm-in-sbt-comparison}"
+  jpa:
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
