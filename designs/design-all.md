@@ -144,4 +144,13 @@ LIMIT 100 OFFSET 0;
 ```
 
 # API设计
-待完善
+
+## a1.数据准备API
+使用JPA实现数据准备API。
+
+- uri: /api/data/prepare
+- method: POST
+- request body: null
+- response body: 各张表的数据量
+- 描述：基于`比较场景`与`DB设计`，为每张表生成对应的数据。(每张表的数据量，以及各个表之间的关系，参考`designs/db/design-db.md`文档)
+
