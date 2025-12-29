@@ -1,0 +1,147 @@
+Design for java-orm-in-sbt-comparison
+==========
+
+# 背景
+java-orm-in-sbt-comparison是一个用于比较java orm框架的springboot工程。
+
+## 技术栈
+- Java: OpenJDK 25
+- SpringBoot: 4.0.1
+- 数据库: MySQL 8
+- JPA: 4.0.1
+- Mybatis: 3.5.19
+
+# 比较场景
+准备比较以下场景中不同ORM框架的性能差异：
+
+1. 单表插入 : 对一张数据量为10万的表进行单条数据插入,分别考虑单线程连续插入T条数据和N个并发线程分别插入M条数据的场景。
+2. 批量插入 : 对一张数据量为10万的表进行批量插入，只考虑单线程分批插入10000条数据的场景。
+3. 主键更新 ：对一张数据量为10万的表进行主键更新，只考虑N个并发线程分别更新M条数据的场景。
+4. 批量更新 : 对一张数据量为10万的表进行批量更新，只考虑单线程分批更新10000条数据的场景。
+5. 分页查询 : 基于一个复杂SQL(多表关联)进行分页查询,其中主表100万数据量，从表10万数据量，分页大小为100，关联5张表(两个内联,其他外联),有CTE查询,有嵌套子查询,有分组，有排序。分别考虑单线程分页查询和N个并发线程同时分页查询的场景。
+6. 全表查询 : 对一个数据量为1000的表进行全表查询，分别考虑单线程全表查询和N个并发线程同时全表查询的场景。
+
+
+# DB设计
+参考 `designs/db/design-db.md`
+
+## 场景5：分页查询相关表
+
+场景5涉及以下6张表：
+
+| 表名 | 中文名 | 数据量 | 说明 |
+|------|--------|--------|------|
+| order_main | 订单主表 | 100万 | 主表，存储订单基本信息 |
+| order_detail | 订单明细表 | 200万 | 从表，存储订单商品明细 |
+| customer | 客户表 | 10万 | 客户基本信息 |
+| product | 商品表 | 10万 | 商品基本信息 |
+| product_category | 商品分类表 | 100 | 商品分类信息 |
+| region | 地区表 | 1000 | 地区信息 |
+
+### 表关系详细说明
+
+#### 1. customer ↔ order_main（一对多）
+- **关系类型**：一对多
+- **业务含义**：一个客户可以下多个订单
+- **关联字段**：
+  - `customer.id` → `order_main.user_id`
+- **JOIN类型**：INNER JOIN（内联）
+- **基数**：
+  - 1个 customer : N个 order_main
+  - 平均比例：1客户 : 10订单
+
+#### 2. order_main ↔ order_detail（一对多）
+- **关系类型**：一对多
+- **业务含义**：一个订单包含多个订单明细
+- **关联字段**：
+  - `order_main.id` → `order_detail.order_id`
+- **JOIN类型**：INNER JOIN（内联）
+- **基数**：
+  - 1个 order_main : N个 order_detail
+  - 平均比例：1订单 : 2明细
+
+#### 3. order_detail ↔ product（多对一）
+- **关系类型**：多对一
+- **业务含义**：多个订单明细可以对应同一商品
+- **关联字段**：
+  - `product.id` → `order_detail.product_id`
+- **JOIN类型**：INNER JOIN（内联）
+- **基数**：
+  - N个 order_detail : 1个 product
+  - 平均比例：20明细 : 1商品
+
+#### 4. product ↔ product_category（多对一）
+- **关系类型**：多对一
+- **业务含义**：多个商品属于同一分类
+- **关联字段**：
+  - `product_category.id` → `product.category_id`
+- **JOIN类型**：LEFT JOIN（外联）
+- **基数**：
+  - N个 product : 1个 product_category
+  - 平均比例：1000商品 : 1分类
+
+#### 5. order_main ↔ region（多对一）
+- **关系类型**：多对一
+- **业务含义**：订单所属地区
+- **关联字段**：
+  - `region.region_code` → `order_main.region_code`
+- **JOIN类型**：LEFT JOIN（外联）
+- **基数**：
+  - N个 order_main : 1个 region
+  - 说明：region_code允许NULL
+
+### 复杂查询示例
+
+基于以上ER关系，场景5的复杂分页查询SQL示例：
+
+```sql
+-- CTE：统计各分类商品销售情况
+WITH category_sales AS (
+    SELECT
+        pc.id AS category_id,
+        pc.category_name,
+        COUNT(od.id) AS sales_count,
+        SUM(od.actual_price) AS total_sales
+    FROM product_category pc
+    LEFT JOIN product p ON pc.id = p.category_id
+    LEFT JOIN order_detail od ON p.id = od.product_id
+    GROUP BY pc.id, pc.category_name
+)
+-- 主查询：多表关联分页查询
+SELECT
+    om.id AS order_id,
+    om.order_no,
+    c.customer_name,
+    c.customer_type,
+    om.total_amount,
+    om.actual_amount,
+    om.order_status,
+    COUNT(od.id) AS detail_count,
+    SUM(od.actual_price) AS detail_total_amount,
+    p.product_name,
+    pc.category_name,
+    cs.sales_count AS category_sales_count,
+    cs.total_sales AS category_total_sales,
+    om.receiver_address,
+    om.create_time
+FROM order_main om
+INNER JOIN customer c ON om.user_id = c.id
+INNER JOIN order_detail od ON om.id = od.order_id
+INNER JOIN product p ON od.product_id = p.id
+LEFT JOIN product_category pc ON p.category_id = pc.id
+LEFT JOIN region r ON om.region_code = r.region_code
+LEFT JOIN category_sales cs ON pc.id = cs.category_id
+WHERE om.order_status IN (1, 2, 3)
+  AND om.create_time >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+GROUP BY om.id, om.order_no, c.customer_name, c.customer_type,
+         om.total_amount, om.actual_amount, om.order_status,
+         p.product_name, pc.category_name,
+         cs.sales_count, cs.total_sales,
+         om.receiver_address, om.create_time
+HAVING SUM(od.actual_price) > 100
+ORDER BY om.create_time DESC, om.id DESC
+LIMIT 100 OFFSET 0;
+```
+
+
+
