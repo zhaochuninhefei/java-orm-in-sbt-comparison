@@ -25,7 +25,7 @@ public class JpaController {
 
     /**
      * 单表插入API
-     * 
+     *
      * @param request 请求体，包含insertCount参数
      * @return 实际插入的件数
      */
@@ -43,5 +43,18 @@ public class JpaController {
         int actualInsertCount = jpaService.insertUserProfiles(insertCount);
 
         return ResponseEntity.ok(actualInsertCount);
+    }
+
+    /**
+     * 主键更新API
+     *
+     * @return 影响行数
+     */
+    @PostMapping("/update/pk")
+    public ResponseEntity<Integer> updateByPk() {
+        // 执行主键更新操作
+        int affectedRows = jpaService.updateUserProfileByPk();
+
+        return ResponseEntity.ok(affectedRows);
     }
 }

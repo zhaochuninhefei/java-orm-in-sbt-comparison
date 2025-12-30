@@ -40,19 +40,16 @@ public class JpaService {
 
     /**
      * 批量插入用户数据
-     * 
+     *
      * @param insertCount 要插入的数据量
      * @return 实际插入的数据量
      */
     @Transactional
     public int insertUserProfiles(int insertCount) {
-        log.info("开始插入用户数据，数量：{}", insertCount);
-
         // 生成并插入用户数据
         for (int i = 1; i <= insertCount; i++) {
             UserProfile profile = generateUserProfile(i);
             userProfileRepository.save(profile);
-
             // 每达到 batch_size 数量，就 flush 并 clear 一次
             if (i % batchSize == 0) {
                 // flush 将数据同步到数据库（执行批量 SQL）
@@ -61,18 +58,45 @@ public class JpaService {
                 entityManager.clear();
             }
         }
-
         // 循环结束后，处理剩余的数据
         entityManager.flush();
         entityManager.clear();
-
-        log.info("完成用户数据插入，数量：{}", insertCount);
         return insertCount;
     }
 
     /**
+     * 根据主键更新用户数据
+     * 随机选择一条记录进行更新
+     *
+     * @return 影响行数
+     */
+    @Transactional
+    public int updateUserProfileByPk() {
+        // 随机选择一个ID（假设ID从1开始连续递增）
+        long randomId = 1 + random.nextLong(100000L);
+        // 查询该记录
+        return userProfileRepository.findById(randomId)
+                .map(profile -> {
+                    // 更新字段值
+                    profile.setAge(20 + random.nextInt(40));
+                    profile.setGender(random.nextInt(2) + 1);
+                    profile.setStatus(random.nextBoolean() ? 1 : 0);
+                    profile.setDepartment(DEPARTMENTS[random.nextInt(DEPARTMENTS.length)]);
+                    profile.setPosition(POSITIONS[random.nextInt(POSITIONS.length)]);
+                    profile.setSalary(BigDecimal.valueOf(5000 + random.nextDouble() * 45000).setScale(2, RoundingMode.HALF_UP));
+                    profile.setDescription("更新后的描述信息 - " + System.currentTimeMillis());
+                    profile.setScore(BigDecimal.valueOf(60 + random.nextDouble() * 40).setScale(2, RoundingMode.HALF_UP));
+                    profile.setLevel(random.nextInt(10) + 1);
+                    // 保存更新
+                    userProfileRepository.save(profile);
+                    return 1; // 影响行数
+                })
+                .orElse(0);
+    }
+
+    /**
      * 生成用户数据
-     * 
+     *
      * @param index 用户索引
      * @return 用户实体
      */
