@@ -160,3 +160,36 @@ LIMIT 100 OFFSET 0;
 - service: com.zhaochuninhefei.orm.comparison.service.DataPrepareService
 - repository: com.zhaochuninhefei.orm.comparison.jpa.repository
 - entity: com.zhaochuninhefei.orm.comparison.jpa.entity
+
+## a2.恢复user_profile表数据API
+使用JPA实现恢复user_profile表数据API。
+
+- uri: /api/jpa/restore/user_profile
+- method: POST
+- request body: null
+- response body: 恢复后的user_profile件数
+- 描述：恢复user_profile表数据，默认恢复10万条数据。先truncate表，然后重新插入10万数据。
+- 技术栈: JPA + MySQL + SpringBoot
+
+### 包与类设计
+- controller: com.zhaochuninhefei.orm.comparison.controller.DataPrepareController
+- service: com.zhaochuninhefei.orm.comparison.service.DataPrepareService
+- repository: com.zhaochuninhefei.orm.comparison.jpa.repository
+- entity: com.zhaochuninhefei.orm.comparison.jpa.entity
+
+
+## b1.单表插入API
+使用JPA实现单表插入API，目标表是 user_profile
+
+- uri: /api/jpa/insert
+- method: POST
+- request body: {insertCount: 1000}
+- response body: 实际插入的件数
+- 描述：根据传入的参数，插入指定数量的数据，默认1000。件数超过1000时, 分批插入。
+- 技术栈: JPA + MySQL + SpringBoot
+
+### 包与类设计
+- controller: com.zhaochuninhefei.orm.comparison.controller.JpaController
+- service: com.zhaochuninhefei.orm.comparison.service.JpaService
+- repository: com.zhaochuninhefei.orm.comparison.jpa.repository
+- entity: com.zhaochuninhefei.orm.comparison.jpa.entity
