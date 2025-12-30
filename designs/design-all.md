@@ -105,6 +105,8 @@ WITH category_sales AS (
     FROM product_category pc
     INNER JOIN product p ON pc.id = p.category_id
     INNER JOIN order_detail od ON p.id = od.product_id
+    INNER JOIN order_main om ON om.id = od.order_id
+    WHERE om.region_code = 'REG00003'
     GROUP BY pc.id, pc.category_name
 )
 -- 主查询：多表关联分页查询
@@ -132,8 +134,7 @@ INNER JOIN product p ON od.product_id = p.id
 LEFT JOIN product_category pc ON p.category_id = pc.id
 LEFT JOIN region r ON om.region_code = r.region_code
 LEFT JOIN category_sales cs ON pc.id = cs.category_id
-WHERE om.order_status IN (1, 2, 3)
-  AND om.region_code = 'REG00003'
+WHERE om.region_code = 'REG00003'
 GROUP BY om.id, om.order_no, c.customer_name, c.customer_type,
          om.total_amount, om.actual_amount, om.order_status,
          p.product_name, pc.category_name,
@@ -233,7 +234,7 @@ LIMIT 100 OFFSET 0
 
 - uri: /api/jpa/query/page
 - method: POST
-- request body: {pageNum: 1, pageSize: 100, orderStatus: [1,2,3], regionCode: 'REG00003', minActualPriceSum: 100}
+- request body: {pageNum: 1, pageSize: 100,s regionCode: 'REG00003', minActualPriceSum: 100}
 - response body: 查询结果 + 分页信息
 - 描述：分页查询，返回结果包含分页信息。具体的表和查询SQL参考`DB设计`的`场景5：分页查询相关表`。
 - 技术栈: JPA + MySQL + SpringBoot
