@@ -1,13 +1,19 @@
 package com.zhaochuninhefei.orm.comparison.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 /**
  * 分页查询响应体
  */
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PageQueryResponse {
 
     /**
@@ -38,7 +44,10 @@ public class PageQueryResponse {
     /**
      * 订单明细结果DTO
      */
-    @Data
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class OrderDetailResult {
         /**
          * 订单ID

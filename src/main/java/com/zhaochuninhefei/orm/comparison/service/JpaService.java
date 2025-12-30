@@ -165,7 +165,6 @@ public class JpaService {
 
         // 执行查询
         List<PageQueryResponse.OrderDetailResult> records = orderMainRepository.findComplexPageQuery(
-                request.getOrderStatus(),
                 request.getRegionCode(),
                 request.getMinActualPriceSum(),
                 request.getPageSize(),
@@ -174,7 +173,6 @@ public class JpaService {
 
         // 查询总数
         Long total = orderMainRepository.countComplexPageQuery(
-                request.getOrderStatus(),
                 request.getRegionCode(),
                 request.getMinActualPriceSum()
         );

@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * JPA Controller API 测试
  * 使用 MockMvc 测试真实的 HTTP API
  */
-@SuppressWarnings({"unused", "ObviousNullCheck", "java:S5845"})
+@SuppressWarnings({"unused", "ObviousNullCheck", "java:S5845", "SameParameterValue"})
 @SpringBootTest
 @ActiveProfiles("test")
 @DisplayName("JPA Controller API 测试")

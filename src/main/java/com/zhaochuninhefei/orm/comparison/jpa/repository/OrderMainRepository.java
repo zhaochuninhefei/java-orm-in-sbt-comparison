@@ -20,7 +20,6 @@ public interface OrderMainRepository extends JpaRepository<OrderMain, Long> {
      * 复杂分页查询 - 使用原生SQL
      * 包含CTE、多表JOIN、GROUP BY、HAVING等复杂查询
      *
-     * @param orderStatus 订单状态列表
      * @param regionCode 地区代码
      * @param minActualPriceSum 最小实际价格总和
      * @param pageSize 每页大小
@@ -37,6 +36,8 @@ public interface OrderMainRepository extends JpaRepository<OrderMain, Long> {
                 FROM product_category pc
                 INNER JOIN product p ON pc.id = p.category_id
                 INNER JOIN order_detail od ON p.id = od.product_id
+                INNER JOIN order_main om ON om.id = od.order_id
+                WHERE (:regionCode IS NULL OR om.region_code = :regionCode)
                 GROUP BY pc.id, pc.category_name
             )
             SELECT
@@ -63,8 +64,7 @@ public interface OrderMainRepository extends JpaRepository<OrderMain, Long> {
             LEFT JOIN product_category pc ON p.category_id = pc.id
             LEFT JOIN region r ON om.region_code = r.region_code
             LEFT JOIN category_sales cs ON pc.id = cs.category_id
-            WHERE (:orderStatus IS NULL OR om.order_status IN :orderStatus)
-              AND (:regionCode IS NULL OR om.region_code = :regionCode)
+            WHERE (:regionCode IS NULL OR om.region_code = :regionCode)
             GROUP BY om.id, om.order_no, c.customer_name, c.customer_type,
                      r.region_name, om.total_amount, om.actual_amount, om.order_status,
                      p.product_name, pc.category_name,
@@ -75,7 +75,6 @@ public interface OrderMainRepository extends JpaRepository<OrderMain, Long> {
             LIMIT :pageSize OFFSET :offset
             """, nativeQuery = true)
     List<OrderDetailResult> findComplexPageQuery(
-            @Param("orderStatus") List<Integer> orderStatus,
             @Param("regionCode") String regionCode,
             @Param("minActualPriceSum") Double minActualPriceSum,
             @Param("pageSize") Integer pageSize,
@@ -85,7 +84,6 @@ public interface OrderMainRepository extends JpaRepository<OrderMain, Long> {
     /**
      * 查询总数 - 用于分页
      *
-     * @param orderStatus 订单状态列表
      * @param regionCode 地区代码
      * @param minActualPriceSum 最小实际价格总和
      * @return 总记录数
@@ -100,11 +98,29 @@ public interface OrderMainRepository extends JpaRepository<OrderMain, Long> {
                 FROM product_category pc
                 INNER JOIN product p ON pc.id = p.category_id
                 INNER JOIN order_detail od ON p.id = od.product_id
+                INNER JOIN order_main om ON om.id = od.order_id
+                WHERE (:regionCode IS NULL OR om.region_code = :regionCode)
                 GROUP BY pc.id, pc.category_name
             )
             SELECT COUNT(*) AS total
             FROM (
-                SELECT om.id
+                SELECT
+                    om.id AS orderId,
+                    om.order_no AS orderNo,
+                    c.customer_name AS customerName,
+                    c.customer_type AS customerType,
+                    r.region_name AS regionName,
+                    om.total_amount AS totalAmount,
+                    om.actual_amount AS actualAmount,
+                    om.order_status AS orderStatus,
+                    COUNT(od.id) AS detailCount,
+                    SUM(od.actual_price) AS detailTotalAmount,
+                    p.product_name AS productName,
+                    pc.category_name AS categoryName,
+                    cs.sales_count AS categorySalesCount,
+                    cs.total_sales AS categoryTotalSales,
+                    om.receiver_address AS receiverAddress,
+                    DATE_FORMAT(om.create_time, '%Y-%m-%d %H:%i:%s') AS createTime
                 FROM order_main om
                 INNER JOIN customer c ON om.user_id = c.id
                 INNER JOIN order_detail od ON om.id = od.order_id
@@ -112,8 +128,7 @@ public interface OrderMainRepository extends JpaRepository<OrderMain, Long> {
                 LEFT JOIN product_category pc ON p.category_id = pc.id
                 LEFT JOIN region r ON om.region_code = r.region_code
                 LEFT JOIN category_sales cs ON pc.id = cs.category_id
-                WHERE (:orderStatus IS NULL OR om.order_status IN :orderStatus)
-                  AND (:regionCode IS NULL OR om.region_code = :regionCode)
+                WHERE (:regionCode IS NULL OR om.region_code = :regionCode)
                 GROUP BY om.id, om.order_no, c.customer_name, c.customer_type,
                          r.region_name, om.total_amount, om.actual_amount, om.order_status,
                          p.product_name, pc.category_name,
@@ -123,7 +138,6 @@ public interface OrderMainRepository extends JpaRepository<OrderMain, Long> {
             ) AS count_table
             """, nativeQuery = true)
     Long countComplexPageQuery(
-            @Param("orderStatus") List<Integer> orderStatus,
             @Param("regionCode") String regionCode,
             @Param("minActualPriceSum") Double minActualPriceSum
     );
