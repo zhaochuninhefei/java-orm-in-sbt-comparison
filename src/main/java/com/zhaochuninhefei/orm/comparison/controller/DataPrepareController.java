@@ -32,4 +32,15 @@ public class DataPrepareController {
         DataPrepareResponse response = dataPrepareService.prepareAllData();
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * 恢复user_profile表数据
+     *
+     * @return 恢复后的user_profile件数
+     */
+    @PostMapping("/jpa/restore/user_profile")
+    public ResponseEntity<Integer> restoreUserProfileData() {
+        int count = dataPrepareService.restoreUserProfileData();
+        return ResponseEntity.ok(count);
+    }
 }

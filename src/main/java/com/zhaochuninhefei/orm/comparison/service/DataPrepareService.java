@@ -137,6 +137,28 @@ public class DataPrepareService {
     }
 
     /**
+     * 恢复user_profile表数据
+     * 先truncate表，然后重新插入10万数据
+     */
+    @Transactional
+    public int restoreUserProfileData() {
+        log.info("开始恢复user_profile表数据...");
+
+        // 清空user_profile表
+        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate(); // 临时禁用外键检查
+        entityManager.createNativeQuery("TRUNCATE TABLE user_profile").executeUpdate();
+        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate(); // 重新启用外键检查
+
+        log.info("已清空user_profile表数据");
+
+        // 生成10万条用户基础数据
+        int userProfileCount = generateUserProfiles(100000);
+        log.info("恢复user_profile表数据：{} 条", userProfileCount);
+
+        return userProfileCount;
+    }
+
+    /**
      * 使用TRUNCATE清空所有表数据
      */
     private void truncateAllTables() {
