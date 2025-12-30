@@ -164,7 +164,7 @@ LIMIT 100 OFFSET 0;
 ## a2.恢复user_profile表数据API
 使用JPA实现恢复user_profile表数据API。
 
-- uri: /api/jpa/restore/user_profile
+- uri: /api/data/restore/user_profile
 - method: POST
 - request body: null
 - response body: 恢复后的user_profile件数

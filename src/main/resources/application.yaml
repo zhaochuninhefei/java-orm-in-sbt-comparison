@@ -22,7 +22,9 @@ spring:
 #    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: none
-    show-sql: true
+      jdbc:
+        batch_size: 100
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false

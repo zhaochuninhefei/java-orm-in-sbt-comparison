@@ -18,8 +18,8 @@ import com.zhaochuninhefei.orm.comparison.jpa.repository.ProductRepository;
 import com.zhaochuninhefei.orm.comparison.jpa.repository.RegionRepository;
 import com.zhaochuninhefei.orm.comparison.jpa.repository.UserProfileRepository;
 import jakarta.persistence.EntityManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,11 +36,10 @@ import java.util.Random;
  * 数据准备Service
  * 负责为各张表生成测试数据
  */
+@Slf4j
 @Service
 @SuppressWarnings({"SameParameterValue", "java:S1192", "java:S3358"})
 public class DataPrepareService {
-
-    private static final Logger log = LoggerFactory.getLogger(DataPrepareService.class);
 
     private final UserProfileRepository userProfileRepository;
     private final CustomerRepository customerRepository;
@@ -52,6 +51,10 @@ public class DataPrepareService {
     private final OrderDetailRepository orderDetailRepository;
 
     private final EntityManager entityManager;
+
+    @SuppressWarnings("unused")
+    @Value("${spring.jpa.hibernate.jdbc.batch_size:100}")
+    private int batchSize;
 
     private final Random random = new Random();
 
@@ -185,7 +188,6 @@ public class DataPrepareService {
      * 生成用户基础数据
      */
     private int generateUserProfiles(int count) {
-        List<UserProfile> profiles = new ArrayList<>();
 
         for (int i = 1; i <= count; i++) {
             UserProfile profile = new UserProfile();
@@ -202,19 +204,18 @@ public class DataPrepareService {
             profile.setScore(BigDecimal.valueOf(60 + random.nextDouble() * 40).setScale(2, RoundingMode.HALF_UP));
             profile.setLevel(random.nextInt(10) + 1);
 
-            profiles.add(profile);
-
-            // 每批1000条保存一次
-            if (profiles.size() >= 1000) {
-                userProfileRepository.saveAll(profiles);
-                profiles.clear();
+            userProfileRepository.save(profile);
+            // 每达到 batch_size 数量，就 flush 并 clear 一次
+            if (i % batchSize == 0) {
+                // flush 将数据同步到数据库（执行批量 SQL）
+                entityManager.flush();
+                // clear 清除一级缓存，防止内存堆积，也防止对象重复更新
+                entityManager.clear();
             }
         }
-
-        // 保存剩余数据
-        if (!profiles.isEmpty()) {
-            userProfileRepository.saveAll(profiles);
-        }
+        // 循环结束后，处理剩余的数据
+        entityManager.flush();
+        entityManager.clear();
 
         return count;
     }
