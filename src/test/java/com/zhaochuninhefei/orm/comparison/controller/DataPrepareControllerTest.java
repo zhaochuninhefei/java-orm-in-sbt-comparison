@@ -34,4 +34,18 @@ class DataPrepareControllerTest {
         // 打印响应结果
         System.out.println(restoreResult.getResponse().getContentAsString());
     }
+
+    @Test
+    @DisplayName("恢复user_profile表数据")
+    void testRestoreUserProfileData() throws Exception {
+        // 设置 MockMvc
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+
+        MvcResult restoreResult = mockMvc.perform(post("/api/data/restore/user_profile"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // 打印响应结果
+        System.out.println(restoreResult.getResponse().getContentAsString());
+    }
 }
