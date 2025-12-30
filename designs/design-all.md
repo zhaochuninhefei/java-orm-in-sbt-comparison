@@ -180,7 +180,7 @@ LIMIT 100 OFFSET 0
 - entity: com.zhaochuninhefei.orm.comparison.jpa.entity
 
 
-## b1.单表插入API
+## b1.单表插入API(JPA)
 使用JPA实现单表插入API，目标表是 user_profile
 
 - uri: /api/jpa/insert
@@ -196,7 +196,7 @@ LIMIT 100 OFFSET 0
 - repository: com.zhaochuninhefei.orm.comparison.jpa.repository
 - entity: com.zhaochuninhefei.orm.comparison.jpa.entity
 
-## b2.主键更新API
+## b2.主键更新API(JPA)
 使用JPA实现主键更新API，目标表是 user_profile
 
 - uri: /api/jpa/update/pk
@@ -212,7 +212,7 @@ LIMIT 100 OFFSET 0
 - repository: com.zhaochuninhefei.orm.comparison.jpa.repository
 - entity: com.zhaochuninhefei.orm.comparison.jpa.entity
 
-## b3.批量更新API
+## b3.批量更新API(JPA)
 使用JPA实现批量更新API，目标表是 user_profile
 
 - uri: /api/jpa/update/batch
@@ -228,7 +228,7 @@ LIMIT 100 OFFSET 0
 - repository: com.zhaochuninhefei.orm.comparison.jpa.repository
 - entity: com.zhaochuninhefei.orm.comparison.jpa.entity
 
-## b4.分页查询API
+## b4.分页查询API(JPA)
 使用JPA实现分页查询API，具体的表和查询SQL参考`DB设计`的`场景5：分页查询相关表`。
 
 - uri: /api/jpa/query/page
