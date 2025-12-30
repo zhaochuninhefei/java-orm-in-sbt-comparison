@@ -32,7 +32,16 @@ mvn clean package -DskipTests
 # 运行应用
 mvn spring-boot:run
 ```
-编译时可以直接使用脚本`mvn_build.sh`。
+
+编译时可以直接使用脚本
+```sh
+./mvn_build.sh
+```
+
+### 数据准备
+```bash
+mvn test -Dtest=DataPrepareControllerTest#testPrepareData
+```
 
 ### 数据库相关
 - 应用启动后访问 http://localhost:28080

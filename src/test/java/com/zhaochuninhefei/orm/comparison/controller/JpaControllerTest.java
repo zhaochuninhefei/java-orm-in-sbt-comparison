@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * JPA Controller API 测试
  * 使用 MockMvc 测试真实的 HTTP API
  */
+@SuppressWarnings({"unused", "ObviousNullCheck", "java:S5845"})
 @SpringBootTest
 @ActiveProfiles("test")
 @DisplayName("JPA Controller API 测试")
@@ -50,7 +51,7 @@ class JpaControllerTest {
 
         // 获取恢复结果
         String restoreResponseContent = restoreResult.getResponse().getContentAsString();
-        Integer restoredCount = Integer.valueOf(restoreResponseContent.trim());
+        int restoredCount = Integer.parseInt(restoreResponseContent.trim());
 
         System.out.println("✓ user_profile 表数据恢复完成");
         System.out.println("  - 恢复件数: " + restoredCount);
@@ -82,7 +83,7 @@ class JpaControllerTest {
 
             // 获取结果
             String warmupResponseContent = warmupResult.getResponse().getContentAsString();
-            Integer warmupCount = Integer.valueOf(warmupResponseContent.trim());
+            int warmupCount = Integer.parseInt(warmupResponseContent.trim());
             System.out.println("  - 插入件数: " + warmupCount);
         }
 
@@ -114,7 +115,7 @@ class JpaControllerTest {
 
             // 获取结果
             String testResponseContent = testResult.getResponse().getContentAsString();
-            Integer actualCount = Integer.valueOf(testResponseContent.trim());
+            int actualCount = Integer.parseInt(testResponseContent.trim());
             counts[i] = actualCount;
 
             System.out.println("  - 插入件数: " + actualCount);
