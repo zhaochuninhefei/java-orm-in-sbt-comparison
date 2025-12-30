@@ -193,3 +193,22 @@ LIMIT 100 OFFSET 0;
 - service: com.zhaochuninhefei.orm.comparison.service.JpaService
 - repository: com.zhaochuninhefei.orm.comparison.jpa.repository
 - entity: com.zhaochuninhefei.orm.comparison.jpa.entity
+
+## b2.主键更新API
+使用JPA实现主键更新API，目标表是 user_profile
+
+- uri: /api/jpa/update/pk
+- method: POST
+- request body: null
+- response body: 影响行数
+- 描述：根据主键更新user_profile表中随机一行数据
+- 技术栈: JPA + MySQL + SpringBoot
+
+### 包与类设计
+- controller: com.zhaochuninhefei.orm.comparison.controller.JpaController
+- service: com.zhaochuninhefei.orm.comparison.service.JpaService
+- repository: com.zhaochuninhefei.orm.comparison.jpa.repository
+- entity: com.zhaochuninhefei.orm.comparison.jpa.entity
+
+
+
