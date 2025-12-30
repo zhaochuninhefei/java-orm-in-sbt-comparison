@@ -1,6 +1,7 @@
 package com.zhaochuninhefei.orm.comparison.controller;
 
-import com.zhaochuninhefei.orm.comparison.dto.JpaInsertRequest;
+import com.zhaochuninhefei.orm.comparison.dto.BatchUpdateRequest;
+import com.zhaochuninhefei.orm.comparison.dto.InsertRequest;
 import com.zhaochuninhefei.orm.comparison.service.JpaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +31,7 @@ public class JpaController {
      * @return 实际插入的件数
      */
     @PostMapping("/insert")
-    public ResponseEntity<Integer> insertData(@RequestBody JpaInsertRequest request) {
+    public ResponseEntity<Integer> insertData(@RequestBody InsertRequest request) {
         // 获取插入数量
         int insertCount = request.getInsertCount();
 
@@ -54,6 +55,23 @@ public class JpaController {
     public ResponseEntity<Integer> updateByPk() {
         // 执行主键更新操作
         int affectedRows = jpaService.updateUserProfileByPk();
+
+        return ResponseEntity.ok(affectedRows);
+    }
+
+    /**
+     * 批量更新API
+     *
+     * @param request 请求体，包含level参数
+     * @return 影响行数
+     */
+    @PostMapping("/update/batch")
+    public ResponseEntity<Integer> batchUpdate(@RequestBody BatchUpdateRequest request) {
+        // 获取要更新的level
+        Integer level = request.getLevel();
+
+        // 执行批量更新操作
+        int affectedRows = jpaService.batchUpdateUserProfilesByLevel(level);
 
         return ResponseEntity.ok(affectedRows);
     }

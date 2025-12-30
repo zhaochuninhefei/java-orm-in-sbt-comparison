@@ -7,6 +7,6 @@ import lombok.Data;
  * 用于接收单表插入API的请求参数
  */
 @Data
-public class JpaInsertRequest {
+public class InsertRequest {
     private int insertCount = 1000; // 默认值为1000
 }

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -92,6 +93,57 @@ public class JpaService {
                     return 1; // 影响行数
                 })
                 .orElse(0);
+    }
+
+    /**
+     * 批量更新指定level的用户数据
+     * 更新内容：age+1, salary+1000, description前面添加"update"
+     *
+     * @param level 指定的level
+     * @return 影响行数
+     */
+    @Transactional
+    public int batchUpdateUserProfilesByLevel(Integer level) {
+        // 查询指定level的所有用户
+        List<UserProfile> profiles = userProfileRepository.findByLevel(level);
+
+        if (profiles.isEmpty()) {
+            return 0;
+        }
+
+        // 批量更新
+        int count = 0;
+        for (UserProfile profile : profiles) {
+            // age + 1
+            profile.setAge(profile.getAge() + 1);
+
+            // salary + 1000
+            profile.setSalary(profile.getSalary().add(BigDecimal.valueOf(1000)));
+
+            // description 前面添加 "update"
+            String currentDescription = profile.getDescription();
+            if (currentDescription == null || currentDescription.isEmpty()) {
+                profile.setDescription("update");
+            } else {
+                profile.setDescription("update" + currentDescription);
+            }
+
+            // 保存更新
+            userProfileRepository.save(profile);
+            count++;
+
+            // 每达到 batch_size 数量，就 flush 并 clear 一次
+            if (count % batchSize == 0) {
+                entityManager.flush();
+                entityManager.clear();
+            }
+        }
+
+        // 循环结束后，处理剩余的数据
+        entityManager.flush();
+        entityManager.clear();
+
+        return count;
     }
 
     /**
