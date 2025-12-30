@@ -201,8 +201,7 @@ class JpaControllerTest {
 
             // 获取结果
             String warmupResponseContent = warmupResult.getResponse().getContentAsString();
-            int warmupCount = Integer.parseInt(warmupResponseContent.trim());
-            System.out.println("  - " + operationName + "件数: " + warmupCount);
+            System.out.println("  - " + operationName + "结果: " + warmupResponseContent);
         }
 
         System.out.println("✓ JVM 热机完成");
