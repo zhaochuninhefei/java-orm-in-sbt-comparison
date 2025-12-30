@@ -200,7 +200,7 @@ public class DataPrepareService {
             profile.setSalary(BigDecimal.valueOf(5000 + random.nextDouble() * 45000).setScale(2, RoundingMode.HALF_UP));
             profile.setDescription("这是用户" + i + "的描述信息");
             profile.setScore(BigDecimal.valueOf(60 + random.nextDouble() * 40).setScale(2, RoundingMode.HALF_UP));
-            profile.setLevel(random.nextInt(10) + 1);
+            profile.setLevel(i % 10 + 1);
 
             userProfileRepository.save(profile);
             // 每达到 batch_size 数量，就 flush 并 clear 一次

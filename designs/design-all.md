@@ -210,5 +210,20 @@ LIMIT 100 OFFSET 0;
 - repository: com.zhaochuninhefei.orm.comparison.jpa.repository
 - entity: com.zhaochuninhefei.orm.comparison.jpa.entity
 
+## b3.批量更新API
+使用JPA实现批量更新API，目标表是 user_profile
+
+- uri: /api/jpa/update/batch
+- method: POST
+- request body: {level: 5}
+- response body: 影响行数
+- 描述：批量更新user_profile表中指定level的数据，更新内容:age+1,salary+1000,description添加"update"到前面
+- 技术栈: JPA + MySQL + SpringBoot
+
+### 包与类设计
+- controller: com.zhaochuninhefei.orm.comparison.controller.JpaController
+- service: com.zhaochuninhefei.orm.comparison.service.JpaService
+- repository: com.zhaochuninhefei.orm.comparison.jpa.repository
+- entity: com.zhaochuninhefei.orm.comparison.jpa.entity
 
 
