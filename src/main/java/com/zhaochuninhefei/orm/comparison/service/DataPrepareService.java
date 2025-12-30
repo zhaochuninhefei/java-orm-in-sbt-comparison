@@ -26,9 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -38,7 +36,7 @@ import java.util.Random;
  */
 @Slf4j
 @Service
-@SuppressWarnings({"SameParameterValue", "java:S1192", "java:S3358"})
+@SuppressWarnings({"SameParameterValue", "java:S1192", "java:S3358", "DuplicatedCode"})
 public class DataPrepareService {
 
     private final UserProfileRepository userProfileRepository;
@@ -224,8 +222,6 @@ public class DataPrepareService {
      * 生成客户数据
      */
     private int generateCustomers(int count) {
-        List<Customer> customers = new ArrayList<>();
-
         for (int i = 1; i <= count; i++) {
             Customer customer = new Customer();
             customer.setCustomerNo("CUST" + String.format("%06d", i));
@@ -238,19 +234,18 @@ public class DataPrepareService {
             customer.setTotalConsumption(BigDecimal.valueOf(random.nextDouble() * 50000).setScale(2, RoundingMode.HALF_UP));
             customer.setStatus(random.nextBoolean() ? 1 : 0);
 
-            customers.add(customer);
+            customerRepository.save(customer);
 
-            // 每批1000条保存一次
-            if (customers.size() >= 1000) {
-                customerRepository.saveAll(customers);
-                customers.clear();
+            // 每达到 batch_size 数量，就 flush 并 clear 一次
+            if (i % batchSize == 0) {
+                entityManager.flush();
+                entityManager.clear();
             }
         }
 
-        // 保存剩余数据
-        if (!customers.isEmpty()) {
-            customerRepository.saveAll(customers);
-        }
+        // 循环结束后，处理剩余的数据
+        entityManager.flush();
+        entityManager.clear();
 
         return count;
     }
@@ -259,8 +254,6 @@ public class DataPrepareService {
      * 生成商品分类数据
      */
     private int generateProductCategories(int count) {
-        List<ProductCategory> categories = new ArrayList<>();
-
         for (int i = 1; i <= count; i++) {
             ProductCategory category = new ProductCategory();
             category.setCategoryName("分类" + i);
@@ -269,10 +262,19 @@ public class DataPrepareService {
             category.setSortOrder(i);
             category.setStatus(1);
 
-            categories.add(category);
+            productCategoryRepository.save(category);
+
+            // 每达到 batch_size 数量，就 flush 并 clear 一次
+            if (i % batchSize == 0) {
+                entityManager.flush();
+                entityManager.clear();
+            }
         }
 
-        productCategoryRepository.saveAll(categories);
+        // 循环结束后，处理剩余的数据
+        entityManager.flush();
+        entityManager.clear();
+
         return count;
     }
 
@@ -280,8 +282,6 @@ public class DataPrepareService {
      * 生成地区数据
      */
     private int generateRegions(int count) {
-        List<Region> regions = new ArrayList<>();
-
         for (int i = 1; i <= count; i++) {
             Region region = new Region();
             region.setRegionCode("REG" + String.format("%05d", i));
@@ -291,10 +291,19 @@ public class DataPrepareService {
             region.setSortOrder(i);
             region.setStatus(1);
 
-            regions.add(region);
+            regionRepository.save(region);
+
+            // 每达到 batch_size 数量，就 flush 并 clear 一次
+            if (i % batchSize == 0) {
+                entityManager.flush();
+                entityManager.clear();
+            }
         }
 
-        regionRepository.saveAll(regions);
+        // 循环结束后，处理剩余的数据
+        entityManager.flush();
+        entityManager.clear();
+
         return count;
     }
 
@@ -302,8 +311,6 @@ public class DataPrepareService {
      * 生成配置字典数据
      */
     private int generateConfigDicts(int count) {
-        List<ConfigDict> dicts = new ArrayList<>();
-
         for (int i = 1; i <= count; i++) {
             ConfigDict dict = new ConfigDict();
             dict.setDictCode("DICT_" + String.format("%04d", i));
@@ -314,10 +321,19 @@ public class DataPrepareService {
             dict.setStatus(random.nextBoolean() ? 1 : 0);
             dict.setRemark("这是字典项" + i + "的说明");
 
-            dicts.add(dict);
+            configDictRepository.save(dict);
+
+            // 每达到 batch_size 数量，就 flush 并 clear 一次
+            if (i % batchSize == 0) {
+                entityManager.flush();
+                entityManager.clear();
+            }
         }
 
-        configDictRepository.saveAll(dicts);
+        // 循环结束后，处理剩余的数据
+        entityManager.flush();
+        entityManager.clear();
+
         return count;
     }
 
@@ -325,8 +341,6 @@ public class DataPrepareService {
      * 生成商品数据
      */
     private int generateProducts(int count) {
-        List<Product> products = new ArrayList<>();
-
         for (int i = 1; i <= count; i++) {
             Product product = new Product();
             product.setProductNo("PROD" + String.format("%06d", i));
@@ -340,19 +354,18 @@ public class DataPrepareService {
             product.setSales(random.nextInt(5000));
             product.setStatus(random.nextDouble() > 0.2 ? 1 : 0);
 
-            products.add(product);
+            productRepository.save(product);
 
-            // 每批1000条保存一次
-            if (products.size() >= 1000) {
-                productRepository.saveAll(products);
-                products.clear();
+            // 每达到 batch_size 数量，就 flush 并 clear 一次
+            if (i % batchSize == 0) {
+                entityManager.flush();
+                entityManager.clear();
             }
         }
 
-        // 保存剩余数据
-        if (!products.isEmpty()) {
-            productRepository.saveAll(products);
-        }
+        // 循环结束后，处理剩余的数据
+        entityManager.flush();
+        entityManager.clear();
 
         return count;
     }
@@ -361,8 +374,6 @@ public class DataPrepareService {
      * 生成订单主表数据
      */
     private int generateOrderMains(int count) {
-        List<OrderMain> orders = new ArrayList<>();
-
         for (int i = 1; i <= count; i++) {
             OrderMain order = new OrderMain();
             order.setOrderNo("ORD" + LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")) + String.format("%09d", i));
@@ -391,19 +402,18 @@ public class DataPrepareService {
                 order.setRemark("备注信息" + i);
             }
 
-            orders.add(order);
+            orderMainRepository.save(order);
 
-            // 每批1000条保存一次
-            if (orders.size() >= 1000) {
-                orderMainRepository.saveAll(orders);
-                orders.clear();
+            // 每达到 batch_size 数量，就 flush 并 clear 一次
+            if (i % batchSize == 0) {
+                entityManager.flush();
+                entityManager.clear();
             }
         }
 
-        // 保存剩余数据
-        if (!orders.isEmpty()) {
-            orderMainRepository.saveAll(orders);
-        }
+        // 循环结束后，处理剩余的数据
+        entityManager.flush();
+        entityManager.clear();
 
         return count;
     }
@@ -413,7 +423,7 @@ public class DataPrepareService {
      * 为每个订单生成2个明细（100万订单 x 2明细 = 200万明细）
      */
     private int generateOrderDetails(int totalCount) {
-        List<OrderDetail> details = new ArrayList<>();
+        int recordCount = 0;
 
         // 为每个订单生成2个明细
         for (long orderId = 1; orderId <= 1000000; orderId++) {
@@ -429,20 +439,20 @@ public class DataPrepareService {
                 detail.setDiscount(BigDecimal.valueOf(random.nextDouble() * 20).setScale(2, RoundingMode.HALF_UP));
                 detail.setActualPrice(BigDecimal.valueOf((50 + random.nextDouble() * 500) * (1 + random.nextDouble() * 10) - random.nextDouble() * 20).setScale(2, RoundingMode.HALF_UP));
 
-                details.add(detail);
+                orderDetailRepository.save(detail);
+                recordCount++;
 
-                // 每批1000条保存一次
-                if (details.size() >= 1000) {
-                    orderDetailRepository.saveAll(details);
-                    details.clear();
+                // 每达到 batch_size 数量，就 flush 并 clear 一次
+                if (recordCount % batchSize == 0) {
+                    entityManager.flush();
+                    entityManager.clear();
                 }
             }
         }
 
-        // 保存剩余数据
-        if (!details.isEmpty()) {
-            orderDetailRepository.saveAll(details);
-        }
+        // 循环结束后，处理剩余的数据
+        entityManager.flush();
+        entityManager.clear();
 
         return totalCount;
     }
