@@ -2,6 +2,8 @@ package com.zhaochuninhefei.orm.comparison.controller;
 
 import com.zhaochuninhefei.orm.comparison.dto.BatchUpdateRequest;
 import com.zhaochuninhefei.orm.comparison.dto.InsertRequest;
+import com.zhaochuninhefei.orm.comparison.dto.PageQueryRequest;
+import com.zhaochuninhefei.orm.comparison.dto.PageQueryResponse;
 import com.zhaochuninhefei.orm.comparison.service.JpaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,5 +76,19 @@ public class JpaController {
         int affectedRows = jpaService.batchUpdateUserProfilesByLevel(level);
 
         return ResponseEntity.ok(affectedRows);
+    }
+
+    /**
+     * 分页查询API
+     *
+     * @param request 分页查询请求
+     * @return 分页查询响应
+     */
+    @PostMapping("/query/page")
+    public ResponseEntity<PageQueryResponse> pageQuery(@RequestBody PageQueryRequest request) {
+        // 执行分页查询操作
+        PageQueryResponse response = jpaService.complexPageQuery(request);
+
+        return ResponseEntity.ok(response);
     }
 }

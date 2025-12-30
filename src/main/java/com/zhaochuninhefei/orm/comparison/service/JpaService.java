@@ -1,6 +1,9 @@
 package com.zhaochuninhefei.orm.comparison.service;
 
+import com.zhaochuninhefei.orm.comparison.dto.PageQueryRequest;
+import com.zhaochuninhefei.orm.comparison.dto.PageQueryResponse;
 import com.zhaochuninhefei.orm.comparison.jpa.entity.UserProfile;
+import com.zhaochuninhefei.orm.comparison.jpa.repository.OrderMainRepository;
 import com.zhaochuninhefei.orm.comparison.jpa.repository.UserProfileRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ import java.util.Random;
 public class JpaService {
 
     private final UserProfileRepository userProfileRepository;
+    private final OrderMainRepository orderMainRepository;
     private final EntityManager entityManager;
 
     @SuppressWarnings("unused")
@@ -31,13 +35,14 @@ public class JpaService {
 
     private final Random random = new Random();
 
-    private static final String[] DEPARTMENTS = {"研发部", "产品部", "市场部", "销售部", "人力资源部", "财务部", "运营部", "客服部"};
-    private static final String[] POSITIONS = {"实习生", "专员", "主管", "经理", "总监", "VP"};
-
-    public JpaService(UserProfileRepository userProfileRepository, EntityManager entityManager) {
+    public JpaService(UserProfileRepository userProfileRepository, EntityManager entityManager, OrderMainRepository orderMainRepository) {
         this.userProfileRepository = userProfileRepository;
         this.entityManager = entityManager;
+        this.orderMainRepository = orderMainRepository;
     }
+
+    private static final String[] DEPARTMENTS = {"研发部", "产品部", "市场部", "销售部", "人力资源部", "财务部", "运营部", "客服部"};
+    private static final String[] POSITIONS = {"实习生", "专员", "主管", "经理", "总监", "VP"};
 
     /**
      * 批量插入用户数据
@@ -144,6 +149,45 @@ public class JpaService {
         entityManager.clear();
 
         return count;
+    }
+
+    /**
+     * 复杂分页查询
+     * 包含CTE、多表JOIN、GROUP BY、HAVING等复杂查询
+     *
+     * @param request 分页查询请求
+     * @return 分页查询响应
+     */
+    @Transactional(readOnly = true)
+    public PageQueryResponse complexPageQuery(PageQueryRequest request) {
+        // 计算偏移量
+        int offset = (request.getPageNum() - 1) * request.getPageSize();
+
+        // 执行查询
+        List<PageQueryResponse.OrderDetailResult> records = orderMainRepository.findComplexPageQuery(
+                request.getOrderStatus(),
+                request.getRegionCode(),
+                request.getMinActualPriceSum(),
+                request.getPageSize(),
+                offset
+        );
+
+        // 查询总数
+        Long total = orderMainRepository.countComplexPageQuery(
+                request.getOrderStatus(),
+                request.getRegionCode(),
+                request.getMinActualPriceSum()
+        );
+
+        // 构建响应
+        PageQueryResponse response = new PageQueryResponse();
+        response.setRecords(records);
+        response.setTotal(total);
+        response.setPageNum(request.getPageNum());
+        response.setPageSize(request.getPageSize());
+        response.setTotalPages((int) Math.ceil((double) total / request.getPageSize()));
+
+        return response;
     }
 
     /**
