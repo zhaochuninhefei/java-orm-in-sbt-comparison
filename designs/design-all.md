@@ -103,8 +103,8 @@ WITH category_sales AS (
         COUNT(od.id) AS sales_count,
         SUM(od.actual_price) AS total_sales
     FROM product_category pc
-    LEFT JOIN product p ON pc.id = p.category_id
-    LEFT JOIN order_detail od ON p.id = od.product_id
+    INNER JOIN product p ON pc.id = p.category_id
+    INNER JOIN order_detail od ON p.id = od.product_id
     GROUP BY pc.id, pc.category_name
 )
 -- 主查询：多表关联分页查询
@@ -113,6 +113,7 @@ SELECT
     om.order_no,
     c.customer_name,
     c.customer_type,
+    r.region_name,
     om.total_amount,
     om.actual_amount,
     om.order_status,
@@ -132,7 +133,7 @@ LEFT JOIN product_category pc ON p.category_id = pc.id
 LEFT JOIN region r ON om.region_code = r.region_code
 LEFT JOIN category_sales cs ON pc.id = cs.category_id
 WHERE om.order_status IN (1, 2, 3)
-  AND om.create_time >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+  AND om.region_code = 'REG00003'
 GROUP BY om.id, om.order_no, c.customer_name, c.customer_type,
          om.total_amount, om.actual_amount, om.order_status,
          p.product_name, pc.category_name,
@@ -140,7 +141,8 @@ GROUP BY om.id, om.order_no, c.customer_name, c.customer_type,
          om.receiver_address, om.create_time
 HAVING SUM(od.actual_price) > 100
 ORDER BY om.create_time DESC, om.id DESC
-LIMIT 100 OFFSET 0;
+LIMIT 100 OFFSET 0
+;
 ```
 
 # API设计
@@ -218,6 +220,22 @@ LIMIT 100 OFFSET 0;
 - request body: {level: 5}
 - response body: 影响行数
 - 描述：批量更新user_profile表中指定level的数据，更新内容:age+1,salary+1000,description添加"update"到前面
+- 技术栈: JPA + MySQL + SpringBoot
+
+### 包与类设计
+- controller: com.zhaochuninhefei.orm.comparison.controller.JpaController
+- service: com.zhaochuninhefei.orm.comparison.service.JpaService
+- repository: com.zhaochuninhefei.orm.comparison.jpa.repository
+- entity: com.zhaochuninhefei.orm.comparison.jpa.entity
+
+## b4.分页查询API
+使用JPA实现分页查询API，具体的表和查询SQL参考`DB设计`的`场景5：分页查询相关表`。
+
+- uri: /api/jpa/query/page
+- method: POST
+- request body: {pageNum: 1, pageSize: 100, orderStatus: [1,2,3], regionCode: 'REG00003', minActualPriceSum: 100}
+- response body: 查询结果 + 分页信息
+- 描述：分页查询，返回结果包含分页信息。具体的表和查询SQL参考`DB设计`的`场景5：分页查询相关表`。
 - 技术栈: JPA + MySQL + SpringBoot
 
 ### 包与类设计

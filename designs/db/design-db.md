@@ -213,8 +213,8 @@ WITH category_sales AS (
         COUNT(od.id) AS sales_count,
         SUM(od.actual_price) AS total_sales
     FROM product_category pc
-    LEFT JOIN product p ON pc.id = p.category_id
-    LEFT JOIN order_detail od ON p.id = od.product_id
+    INNER JOIN product p ON pc.id = p.category_id
+    INNER JOIN order_detail od ON p.id = od.product_id
     GROUP BY pc.id, pc.category_name
 )
 -- 主查询：多表关联分页查询
@@ -223,6 +223,7 @@ SELECT
     om.order_no,
     c.customer_name,
     c.customer_type,
+    r.region_name,
     om.total_amount,
     om.actual_amount,
     om.order_status,
@@ -242,7 +243,7 @@ LEFT JOIN product_category pc ON p.category_id = pc.id
 LEFT JOIN region r ON om.region_code = r.region_code
 LEFT JOIN category_sales cs ON pc.id = cs.category_id
 WHERE om.order_status IN (1, 2, 3)
-  AND om.create_time >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+  AND om.region_code = 'REG00003'
 GROUP BY om.id, om.order_no, c.customer_name, c.customer_type,
          om.total_amount, om.actual_amount, om.order_status,
          p.product_name, pc.category_name,
@@ -250,7 +251,8 @@ GROUP BY om.id, om.order_no, c.customer_name, c.customer_type,
          om.receiver_address, om.create_time
 HAVING SUM(od.actual_price) > 100
 ORDER BY om.create_time DESC, om.id DESC
-LIMIT 100 OFFSET 0;
+LIMIT 100 OFFSET 0
+;
 ```
 
 ### 查询复杂度说明
