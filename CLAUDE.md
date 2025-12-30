@@ -87,6 +87,9 @@ mvn test -Dtest=DataPrepareControllerTest#testPrepareData
 - `order_main`: 订单主表(100万条)
 - `order_detail`: 订单明细表(200万条)
 
+## 相关设计
+相关设计文档位于目录`designs`下。
+
 ## 关键技术要点
 
 ### MyBatis 集成
