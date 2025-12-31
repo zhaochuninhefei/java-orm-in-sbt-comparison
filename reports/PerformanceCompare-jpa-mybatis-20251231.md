@@ -21,7 +21,8 @@ PerformanceCompare-jpa-mybatis-20251231
 | jpa | 864.67 | 3 |
 | mybatis | 399.67 | 3 |
 
-> JPA采用的方案是 entity.save + entityManager.flush 分批插入, 并开启JDBC的SQL批量执行功能。 saveAll跑出来的性能不好;
+> JPA采用的方案是 entity.save + entityManager.flush 分批插入, 并开启JDBC的SQL批量执行功能。 saveAll跑出来的性能不好。
+> 
 > Mybatis采用的方案是直接写批量插入SQL 分批插入。
 
 
@@ -53,6 +54,7 @@ PerformanceCompare-jpa-mybatis-20251231
 | mybatis | 99.67 | 3 |
 
 > JPA直接自定义SQL + Pageable分页
+> 
 > Mybatis采用Mapper + PageHelper分页
 
 ## testQueryAll
