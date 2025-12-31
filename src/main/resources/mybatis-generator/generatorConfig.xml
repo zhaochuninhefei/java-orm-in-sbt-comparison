@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "https://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <!--执行generator插件生成文件的命令： call mvn mybatis-generator:generate -e -->
+    <!-- 引入配置文件 -->
+    <properties resource="mybatis-generator/mybatisGeneratorinit.properties"/>
+    <!-- 数据库驱动:选择你的本地硬盘上面的数据库驱动包-->
+     <classPathEntry location="/home/maven_repo/com/mysql/mysql-connector-j/9.5.0/mysql-connector-j-9.5.0.jar" />
+
+    <context id="MysqlTables" targetRuntime="MyBatis3">
+        <!-- 生成的Java文件的编码 -->
+        <property name="javaFileEncoding" value="UTF-8"/>
+
+        <!--数据库链接URL，用户名、密码 -->
+        <jdbcConnection driverClass="${jdbc_driver}" connectionURL="${jdbc_url}" userId="${jdbc_user}" password="${jdbc_password}" >
+            <property name="serverTimezone" value="Asia/Shanghai"/>
+            <property name="nullCatalogMeansCurrent" value="true"/>
+        </jdbcConnection>
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+        <!-- 生成模型的包名和位置-->
+        <javaModelGenerator targetPackage="com.zhaochuninhefei.orm.comparison.mybatis.po" targetProject="${project}">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <!-- 生成映射文件的包名和位置-->
+        <sqlMapGenerator targetPackage="com.zhaochuninhefei.orm.comparison.mybatis.mapper" targetProject="${resources}">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+        <!--生成DAO的包名和位置-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.zhaochuninhefei.orm.comparison.mybatis.dao" targetProject="${project}">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名-->
+        <table tableName="user_profile" domainObjectName="PoUserProfile" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" />
+            <columnOverride column="create_time" property="createTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+            <columnOverride column="update_time" property="updateTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+        </table>
+        <table tableName="order_main" domainObjectName="PoOrderMain" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" />
+            <columnOverride column="payment_time" property="paymentTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+            <columnOverride column="ship_time" property="shipTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+            <columnOverride column="finish_time" property="finishTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+            <columnOverride column="create_time" property="createTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+            <columnOverride column="update_time" property="updateTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+        </table>
+        <table tableName="order_detail" domainObjectName="PoOrderDetail" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" />
+            <columnOverride column="create_time" property="createTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+        </table>
+        <table tableName="customer" domainObjectName="PoCustomer" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" />
+            <columnOverride column="register_time" property="registerTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+            <columnOverride column="last_login_time" property="lastLoginTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+        </table>
+        <table tableName="product" domainObjectName="PoProduct" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" />
+            <columnOverride column="create_time" property="createTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+            <columnOverride column="update_time" property="updateTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+        </table>
+        <table tableName="product_category" domainObjectName="PoProductCategory" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" />
+            <columnOverride column="create_time" property="createTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+        </table>
+        <table tableName="region" domainObjectName="PoRegion" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" />
+        </table>
+        <table tableName="config_dict" domainObjectName="PoConfigDict" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" />
+            <columnOverride column="create_time" property="createTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+            <columnOverride column="update_time" property="updateTime" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" jdbcType="OTHER" javaType="java.time.LocalDateTime" />
+        </table>
+
+    </context>
+</generatorConfiguration>

@@ -17,7 +17,7 @@ java-orm-in-sbt-comparison是一个用于比较java orm框架的springboot工程
 1. 单表插入 : 对一张数据量为10万的表进行单条数据插入,分别考虑单线程连续插入T条数据和N个并发线程分别插入M条数据的场景。
 2. 批量插入 : 对一张数据量为10万的表进行批量插入，只考虑单线程分批插入10000条数据的场景。
 3. 主键更新 ：对一张数据量为10万的表进行主键更新，只考虑N个并发线程分别更新M条数据的场景。
-4. 批量更新 : 对一张数据量为10万的表进行批量更新，只考虑单线程分批更新10000条数据的场景。
+4. 条件更新 : 对一张数据量为10万的表进行条件更新，只考虑单线程条件更新10000条数据的场景。
 5. 分页查询 : 基于一个复杂SQL(多表关联)进行分页查询,其中主表100万数据量，从表10万数据量，分页大小为100，关联5张表(两个内联,其他外联),有CTE查询,有嵌套子查询,有分组，有排序。分别考虑单线程分页查询和N个并发线程同时分页查询的场景。
 6. 全表查询 : 对一个数据量为1000的表进行全表查询，分别考虑单线程全表查询和N个并发线程同时全表查询的场景。
 
@@ -213,14 +213,14 @@ LIMIT 100 OFFSET 0
 - repository: com.zhaochuninhefei.orm.comparison.jpa.repository
 - entity: com.zhaochuninhefei.orm.comparison.jpa.entity
 
-## b3.批量更新API(JPA)
-使用JPA实现批量更新API，目标表是 user_profile
+## b3.条件更新API(JPA)
+使用JPA实现条件更新API，目标表是 user_profile
 
-- uri: /api/jpa/update/batch
+- uri: /api/jpa/update/condition
 - method: POST
 - request body: {level: 5}
 - response body: 影响行数
-- 描述：批量更新user_profile表中指定level的数据，更新内容:age+1,salary+1000,description添加"update"到前面
+- 描述：条件更新user_profile表中指定level的数据，更新内容:age+1,salary+1000,description添加"update"到前面
 - 技术栈: JPA + MySQL + SpringBoot
 
 ### 包与类设计

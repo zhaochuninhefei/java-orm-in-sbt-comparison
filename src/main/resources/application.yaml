@@ -1,3 +1,5 @@
+mybatis:
+  mapper-locations: "${env_mybatis_mapper_locations:classpath:com/zhaochuninhefei/orm/comparison/mybatis/mapper/*.xml}"
 server:
   port: 28080
 
@@ -19,7 +21,6 @@ spring:
       minimum-idle: "${java_orm_in_sbt_comparison_hikari_minimum_idle:5}"
       pool-name: "${java_orm_in_sbt_comparison_hikari_pool_name:HikariCP-java-orm-in-sbt-comparison}"
   jpa:
-#    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: none
       jdbc:

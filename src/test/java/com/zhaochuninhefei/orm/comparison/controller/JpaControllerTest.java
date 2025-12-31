@@ -113,7 +113,7 @@ class JpaControllerTest {
             System.out.println("   - 最小执行时间: " + (long) getMinDuration() + "ms");
             System.out.println("   - 最大执行时间: " + (long) getMaxDuration() + "ms");
             System.out.println();
-            System.out.println("3. 性能指标:");
+            System.out.println("性能指标:");
             System.out.println("   - 平均每条耗时: " + String.format("%.4f", getAvgTimePerRecord()) + " ms/条");
             System.out.println("   - 吞吐量: " + String.format("%.2f", getThroughput()) + " 条/秒");
             System.out.println("========================================");
@@ -334,10 +334,10 @@ class JpaControllerTest {
         System.out.println("========================================");
 
         // JVM 热机
-        performWarmup(mockMvc, "/api/jpa/update/pk", null, "更新");
+        performWarmup(mockMvc, "/api/jpa/update/pk", null, "主键更新");
 
         // 正式测试
-        TestStatistics stats = performFormalTest(mockMvc, "/api/jpa/update/pk", null, "更新", 3);
+        TestStatistics stats = performFormalTest(mockMvc, "/api/jpa/update/pk", null, "主键更新", 3);
 
         // 验证结果
         for (int i = 0; i < 3; i++) {
@@ -350,8 +350,8 @@ class JpaControllerTest {
     }
 
     @Test
-    @DisplayName("测试 JPA 批量更新 API")
-    void testBatchUpdate() throws Exception {
+    @DisplayName("测试 JPA 条件更新 API")
+    void testUpdateByCondition() throws Exception {
         // 设置 MockMvc
         MockMvc mockMvc = createMockMvc();
 
@@ -360,7 +360,7 @@ class JpaControllerTest {
 
         // 执行测试
         System.out.println("========================================");
-        System.out.println("第二步：执行 JPA 批量更新 API");
+        System.out.println("第二步：执行 JPA 条件更新 API");
         System.out.println("========================================");
 
         String requestBody = "{\"level\": 3}";
@@ -368,10 +368,10 @@ class JpaControllerTest {
         System.out.println();
 
         // JVM 热机
-        performWarmup(mockMvc, "/api/jpa/update/batch", requestBody, "更新");
+        performWarmup(mockMvc, "/api/jpa/update/condition", requestBody, "条件更新");
 
         // 正式测试
-        TestStatistics stats = performFormalTest(mockMvc, "/api/jpa/update/batch", requestBody, "更新", 3);
+        TestStatistics stats = performFormalTest(mockMvc, "/api/jpa/update/condition", requestBody, "条件更新", 3);
 
         // 验证结果
         for (int i = 0; i < 3; i++) {

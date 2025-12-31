@@ -1,6 +1,5 @@
 package com.zhaochuninhefei.orm.comparison.dto;
 
-import com.zhaochuninhefei.orm.comparison.jpa.entity.ConfigDict;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,12 +14,12 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AllQueryResponse {
+public class AllQueryResponse<E> {
 
     /**
      * 查询结果列表
      */
-    private List<ConfigDict> records;
+    private List<E> records;
 
     /**
      * 总记录数

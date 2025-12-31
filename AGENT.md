@@ -88,9 +88,9 @@ mvn test -Dtest=DataPrepareControllerTest#testPrepareData
 - 每达到 batch_size 数量时执行 flush 和 clear,避免内存堆积
 
 ### MyBatis 集成
-虽然项目引入了 MyBatis 依赖,但当前尚未实现 MyBatis 相关的 Mapper 和 Controller。未来需要补充:
-- `src/main/resources/mybatis/mapper/*.xml`: MyBatis XML 映射文件
-- `src/main/java/com/zhaochuninhefei/orm/comparison/mybatis/mapper/*.java`: MyBatis Mapper 接口
+项目引入了 MyBatis,相关实现包的位置:
+- `src/main/java/com/zhaochuninhefei/orm/comparison/mybatis/mapper/*.xml`: MyBatis XML 映射文件
+- `src/main/java/com/zhaochuninhefei/orm/comparison/mybatis/dao/*.java`: MyBatis Mapper 接口
 - `src/main/java/com/zhaochuninhefei/orm/comparison/mybatis/po/*.java`: MyBatis SQL 结果集映射类
 - `src/main/java/com/zhaochuninhefei/orm/comparison/controller/MybatisController.java`: MyBatis 测试 API
 

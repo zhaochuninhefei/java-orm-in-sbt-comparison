@@ -5,8 +5,8 @@ import com.zhaochuninhefei.orm.comparison.dto.BatchUpdateRequest;
 import com.zhaochuninhefei.orm.comparison.dto.InsertRequest;
 import com.zhaochuninhefei.orm.comparison.dto.PageQueryRequest;
 import com.zhaochuninhefei.orm.comparison.dto.PageQueryResponse;
-import com.zhaochuninhefei.orm.comparison.jpa.entity.ConfigDict;
-import com.zhaochuninhefei.orm.comparison.service.JpaService;
+import com.zhaochuninhefei.orm.comparison.mybatis.po.PoConfigDict;
+import com.zhaochuninhefei.orm.comparison.service.MybatisService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
  * 提供JPA相关的数据库操作API
  */
 @RestController
-@RequestMapping("/api/jpa")
+@RequestMapping("/api/mybatis")
 @SuppressWarnings({"NullableProblems", "unused"})
-public class JpaController {
+public class MybatisController {
 
-    private final JpaService jpaService;
+    private final MybatisService mybatisService;
 
-    public JpaController(JpaService jpaService) {
-        this.jpaService = jpaService;
+    public MybatisController(MybatisService mybatisService) {
+        this.mybatisService = mybatisService;
     }
 
     /**
@@ -45,7 +45,7 @@ public class JpaController {
         }
 
         // 执行插入操作
-        int actualInsertCount = jpaService.insertUserProfiles(insertCount);
+        int actualInsertCount = mybatisService.insertUserProfiles(insertCount);
 
         return ResponseEntity.ok(actualInsertCount);
     }
@@ -58,7 +58,7 @@ public class JpaController {
     @PostMapping("/update/pk")
     public ResponseEntity<Integer> updateByPk() {
         // 执行主键更新操作
-        int affectedRows = jpaService.updateUserProfileByPk();
+        int affectedRows = mybatisService.updateUserProfileByPk();
 
         return ResponseEntity.ok(affectedRows);
     }
@@ -75,7 +75,7 @@ public class JpaController {
         Integer level = request.getLevel();
 
         // 执行批量更新操作
-        int affectedRows = jpaService.updateUserProfilesByLevel(level);
+        int affectedRows = mybatisService.updateUserProfilesByLevel(level);
 
         return ResponseEntity.ok(affectedRows);
     }
@@ -89,7 +89,7 @@ public class JpaController {
     @PostMapping("/query/page")
     public ResponseEntity<PageQueryResponse> pageQuery(@RequestBody PageQueryRequest request) {
         // 执行分页查询操作
-        PageQueryResponse response = jpaService.complexPageQuery(request);
+        PageQueryResponse response = mybatisService.complexPageQuery(request);
 
         return ResponseEntity.ok(response);
     }
@@ -100,9 +100,9 @@ public class JpaController {
      * @return 全表查询结果
      */
     @PostMapping("/query/all")
-    public ResponseEntity<AllQueryResponse<ConfigDict>> queryAll() {
+    public ResponseEntity<AllQueryResponse<PoConfigDict>> queryAll() {
         // 执行全表查询操作
-        AllQueryResponse<ConfigDict> response = jpaService.queryAllConfigDict();
+        AllQueryResponse<PoConfigDict> response = mybatisService.queryAllConfigDict();
 
         return ResponseEntity.ok(response);
     }

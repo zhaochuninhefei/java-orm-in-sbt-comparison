@@ -1,6 +1,8 @@
 package com.zhaochuninhefei.orm.comparison.service;
 
+import com.zhaochuninhefei.orm.comparison.common.Constants;
 import com.zhaochuninhefei.orm.comparison.dto.AllQueryResponse;
+import com.zhaochuninhefei.orm.comparison.dto.OrderDetailResult;
 import com.zhaochuninhefei.orm.comparison.dto.PageQueryRequest;
 import com.zhaochuninhefei.orm.comparison.dto.PageQueryResponse;
 import com.zhaochuninhefei.orm.comparison.jpa.entity.ConfigDict;
@@ -11,6 +13,10 @@ import com.zhaochuninhefei.orm.comparison.jpa.repository.UserProfileRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +26,11 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * JPA相关业务Service
- * 负责JPA相关的数据库操作
+ * JPA Service : 基于JPA的测试接口服务
  */
 @Slf4j
 @Service
-@SuppressWarnings({"SameParameterValue", "java:S1192", "DuplicatedCode"})
+@SuppressWarnings({"SameParameterValue", "java:S1192", "DuplicatedCode", "NullableProblems"})
 public class JpaService {
 
     private final UserProfileRepository userProfileRepository;
@@ -45,9 +50,6 @@ public class JpaService {
         this.orderMainRepository = orderMainRepository;
         this.configDictRepository = configDictRepository;
     }
-
-    private static final String[] DEPARTMENTS = {"研发部", "产品部", "市场部", "销售部", "人力资源部", "财务部", "运营部", "客服部"};
-    private static final String[] POSITIONS = {"实习生", "专员", "主管", "经理", "总监", "VP"};
 
     /**
      * 批量插入用户数据
@@ -92,8 +94,8 @@ public class JpaService {
                     profile.setAge(20 + random.nextInt(40));
                     profile.setGender(random.nextInt(2) + 1);
                     profile.setStatus(random.nextBoolean() ? 1 : 0);
-                    profile.setDepartment(DEPARTMENTS[random.nextInt(DEPARTMENTS.length)]);
-                    profile.setPosition(POSITIONS[random.nextInt(POSITIONS.length)]);
+                    profile.setDepartment(Constants.DEPARTMENTS[random.nextInt(Constants.DEPARTMENTS.length)]);
+                    profile.setPosition(Constants.POSITIONS[random.nextInt(Constants.POSITIONS.length)]);
                     profile.setSalary(BigDecimal.valueOf(5000 + random.nextDouble() * 45000).setScale(2, RoundingMode.HALF_UP));
                     profile.setDescription("更新后的描述信息 - " + System.currentTimeMillis());
                     profile.setScore(BigDecimal.valueOf(60 + random.nextDouble() * 40).setScale(2, RoundingMode.HALF_UP));
@@ -106,54 +108,20 @@ public class JpaService {
     }
 
     /**
-     * 批量更新指定level的用户数据
+     * 更新指定level的用户数据
      * 更新内容：age+1, salary+1000, description前面添加"update"
      *
      * @param level 指定的level
      * @return 影响行数
      */
     @Transactional
-    public int batchUpdateUserProfilesByLevel(Integer level) {
-        // 查询指定level的所有用户
-        List<UserProfile> profiles = userProfileRepository.findByLevel(level);
-
-        if (profiles.isEmpty()) {
-            return 0;
-        }
-
-        // 批量更新
-        int count = 0;
-        for (UserProfile profile : profiles) {
-            // age + 1
-            profile.setAge(profile.getAge() + 1);
-
-            // salary + 1000
-            profile.setSalary(profile.getSalary().add(BigDecimal.valueOf(1000)));
-
-            // description 前面添加 "update"
-            String currentDescription = profile.getDescription();
-            if (currentDescription == null || currentDescription.isEmpty()) {
-                profile.setDescription("update");
-            } else {
-                profile.setDescription("update" + currentDescription);
-            }
-
-            // 保存更新
-            userProfileRepository.save(profile);
-            count++;
-
-            // 每达到 batch_size 数量，就 flush 并 clear 一次
-            if (count % batchSize == 0) {
-                entityManager.flush();
-                entityManager.clear();
-            }
-        }
-
-        // 循环结束后，处理剩余的数据
-        entityManager.flush();
-        entityManager.clear();
-
-        return count;
+    public int updateUserProfilesByLevel(Integer level) {
+        var params = new UserProfile();
+        params.setAge(1);
+        params.setSalary(BigDecimal.valueOf(1000));
+        params.setDescription("update");
+        params.setLevel(level);
+        return userProfileRepository.updateWithParams(params);
     }
 
     /**
@@ -165,30 +133,18 @@ public class JpaService {
      */
     @Transactional(readOnly = true)
     public PageQueryResponse complexPageQuery(PageQueryRequest request) {
-        // 计算偏移量
-        int offset = (request.getPageNum() - 1) * request.getPageSize();
+        Sort sort = Sort.by("create_time").descending().and(Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), sort);
 
-        // 执行查询
-        List<PageQueryResponse.OrderDetailResult> records = orderMainRepository.findComplexPageQuery(
-                request.getRegionCode(),
-                request.getMinActualPriceSum(),
-                request.getPageSize(),
-                offset
-        );
-
-        // 查询总数
-        Long total = orderMainRepository.countComplexPageQuery(
-                request.getRegionCode(),
-                request.getMinActualPriceSum()
-        );
+        Page<OrderDetailResult> page = orderMainRepository.complexQueryByPage(request.getRegionCode(), request.getMinActualPriceSum(), pageable);
 
         // 构建响应
         PageQueryResponse response = new PageQueryResponse();
-        response.setRecords(records);
-        response.setTotal(total);
+        response.setRecords(page.toList());
+        response.setTotal(page.getTotalElements());
         response.setPageNum(request.getPageNum());
         response.setPageSize(request.getPageSize());
-        response.setTotalPages((int) Math.ceil((double) total / request.getPageSize()));
+        response.setTotalPages(page.getTotalPages());
 
         return response;
     }
@@ -199,12 +155,11 @@ public class JpaService {
      * @return 全表查询响应
      */
     @Transactional(readOnly = true)
-    public AllQueryResponse queryAllConfigDict() {
+    public AllQueryResponse<ConfigDict> queryAllConfigDict() {
+        // 构建响应
+        AllQueryResponse<ConfigDict> response = new AllQueryResponse<>();
         // 查询所有配置字典数据
         List<ConfigDict> records = configDictRepository.findAll();
-
-        // 构建响应
-        AllQueryResponse response = new AllQueryResponse();
         response.setRecords(records);
         response.setTotal((long) records.size());
 
@@ -225,8 +180,8 @@ public class JpaService {
         profile.setAge(20 + random.nextInt(40));
         profile.setGender(random.nextInt(2) + 1);
         profile.setStatus(random.nextBoolean() ? 1 : 0);
-        profile.setDepartment(DEPARTMENTS[random.nextInt(DEPARTMENTS.length)]);
-        profile.setPosition(POSITIONS[random.nextInt(POSITIONS.length)]);
+        profile.setDepartment(Constants.DEPARTMENTS[random.nextInt(Constants.DEPARTMENTS.length)]);
+        profile.setPosition(Constants.POSITIONS[random.nextInt(Constants.POSITIONS.length)]);
         profile.setSalary(BigDecimal.valueOf(5000 + random.nextDouble() * 45000).setScale(2, RoundingMode.HALF_UP));
         profile.setDescription("这是JPA用户" + index + "的描述信息");
         profile.setScore(BigDecimal.valueOf(60 + random.nextDouble() * 40).setScale(2, RoundingMode.HALF_UP));
