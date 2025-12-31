@@ -14,7 +14,7 @@ PerformanceCompare-jpa-mybatis-20251231
 # 测试结果
 
 ## testInsertApiWith10000Records
-插入1万条数据的耗时
+插入1万条数据的耗时(目标表10万条数据)
 
 | ORM | 平均耗时(ms) | 测试次数 |
 | --- | --- | --- |
@@ -26,7 +26,7 @@ PerformanceCompare-jpa-mybatis-20251231
 
 
 ## testUpdateByPk
-主键更新的耗时
+主键更新的耗时(目标表10万条数据)
 
 | ORM | 平均耗时(ms) | 测试次数 |
 | --- | --- | --- |
@@ -35,7 +35,7 @@ PerformanceCompare-jpa-mybatis-20251231
 
 
 ## testUpdateByCondition
-条件更新(匹配到1万条数据)的耗时
+条件更新(匹配到1万条数据)的耗时(目标表10万条数据)
 
 | ORM | 平均耗时(ms) | 测试次数 |
 | --- | --- | --- |
@@ -45,7 +45,7 @@ PerformanceCompare-jpa-mybatis-20251231
 > JPA也直接写自定义SQL实现条件更新
 
 ## testPageQuery
-复杂分页查询的耗时
+复杂分页查询的耗时(主表100万数据,从表200万数据)
 
 | ORM | 平均耗时(ms) | 测试次数 |
 | --- | --- | --- |
@@ -56,7 +56,7 @@ PerformanceCompare-jpa-mybatis-20251231
 > Mybatis采用Mapper + PageHelper分页
 
 ## testQueryAll
-全表(1000条数据)查询的耗时
+全表查询的耗时(目标表1000条数据)
 
 | ORM | 平均耗时(ms) | 测试次数 |
 | --- | --- | --- |
