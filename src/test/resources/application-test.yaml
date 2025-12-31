@@ -32,3 +32,4 @@ logging:
   level:
     com.zhaochuninhefei.orm.comparison: INFO
     org.springframework.test: INFO
+    com.zhaochuninhefei.orm.comparison.mybatis: INFO

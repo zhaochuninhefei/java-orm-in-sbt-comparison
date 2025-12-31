@@ -112,7 +112,9 @@ public class MybatisService {
      */
     @Transactional(readOnly = true)
     public PageQueryResponse complexPageQuery(PageQueryRequest request) {
-        Page<OrderDetailResult> page = PageMethod.startPage(request.getPageNum(), request.getPageSize()).doSelectPage(() -> poOrderMainMapper.complexQueryByPage(request.getRegionCode(), request.getMinActualPriceSum()));
+        Page<OrderDetailResult> page = PageMethod.startPage(request.getPageNum(), request.getPageSize())
+                .setOrderBy("om.create_time desc, om.id desc")
+                .doSelectPage(() -> poOrderMainMapper.complexQueryByPage(request.getRegionCode(), request.getMinActualPriceSum()));
         PageQueryResponse response = new PageQueryResponse();
         response.setRecords(page.getResult());
         response.setTotal(page.getTotal());
