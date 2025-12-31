@@ -98,7 +98,7 @@ class JpaControllerTest {
             return getTotalRecords() * 1000.0 / getTotalDuration();
         }
 
-        void printStatistics(int restoredCount, long restoreDuration) {
+        void printStatistics() {
             long totalDuration = getTotalDuration();
             long totalRecords = getTotalRecords();
 
@@ -107,11 +107,6 @@ class JpaControllerTest {
             System.out.println();
             System.out.println("性能统计（基于3次正式测试）:");
             System.out.println("========================================");
-            System.out.println("1. 数据恢复阶段:");
-            System.out.println("   - 恢复件数: " + restoredCount + " 条");
-            System.out.println("   - 执行时间: " + restoreDuration + "ms");
-            System.out.println();
-            System.out.println("2. 数据" + operationName + "阶段（3次测试汇总）:");
             System.out.println("   - 总" + operationName + "件数: " + totalRecords + " 条");
             System.out.println("   - 总执行时间: " + totalDuration + "ms");
             System.out.println("   - 平均执行时间: " + String.format("%.2f", getAvgDuration()) + "ms");
@@ -121,9 +116,6 @@ class JpaControllerTest {
             System.out.println("3. 性能指标:");
             System.out.println("   - 平均每条耗时: " + String.format("%.4f", getAvgTimePerRecord()) + " ms/条");
             System.out.println("   - 吞吐量: " + String.format("%.2f", getThroughput()) + " 条/秒");
-            System.out.println();
-            System.out.println("4. 总体统计:");
-            System.out.println("   - 总耗时(含数据恢复): " + (restoreDuration + totalTestEndTime - totalTestStartTime) + "ms");
             System.out.println("========================================");
         }
     }
@@ -324,7 +316,7 @@ class JpaControllerTest {
         }
 
         // 输出统计
-        stats.printStatistics(restoreResult.count(), restoreResult.duration());
+        stats.printStatistics();
     }
 
     @Test
@@ -354,7 +346,7 @@ class JpaControllerTest {
         }
 
         // 输出统计
-        stats.printStatistics(restoreResult.count(), restoreResult.duration());
+        stats.printStatistics();
     }
 
     @Test
@@ -388,7 +380,7 @@ class JpaControllerTest {
         }
 
         // 输出统计
-        stats.printStatistics(restoreResult.count(), restoreResult.duration());
+        stats.printStatistics();
     }
 
     @Test
@@ -420,27 +412,29 @@ class JpaControllerTest {
         // 正式测试（不解析响应为整数）
         TestStatistics stats = performFormalTest(mockMvc, "/api/jpa/query/page", requestBody, "查询", 3, false);
 
-        // ========== 统计结果 ==========
-        System.out.println("========================================");
-        System.out.println("测试结果统计");
-        System.out.println("========================================");
+        // 输出统计
+        stats.printStatistics();
+    }
 
-        // 计算统计数据（基于3次正式测试）
-        long totalDuration = stats.getTotalDuration();
-        double avgDuration = stats.getAvgDuration();
-        double minDuration = stats.getMinDuration();
-        double maxDuration = stats.getMaxDuration();
+    @Test
+    @DisplayName("测试 JPA 全表查询 API")
+    void testQueryAll() throws Exception {
+        // 设置 MockMvc
+        MockMvc mockMvc = createMockMvc();
 
-        // 输出统计信息
-        System.out.println("✓ JPA 分页查询完成");
+        System.out.println("========================================");
+        System.out.println("测试 JPA 全表查询 API");
+        System.out.println("========================================");
+        System.out.println("目标表: config_dict");
         System.out.println();
-        System.out.println("性能统计（基于3次正式测试）:");
-        System.out.println("========================================");
-        System.out.println("分页查询阶段（3次测试汇总）:");
-        System.out.println("   - 总执行时间: " + totalDuration + "ms");
-        System.out.println("   - 平均执行时间: " + String.format("%.2f", avgDuration) + "ms");
-        System.out.println("   - 最小执行时间: " + (long) minDuration + "ms");
-        System.out.println("   - 最大执行时间: " + (long) maxDuration + "ms");
-        System.out.println("========================================");
+
+        // JVM 热机
+        performWarmup(mockMvc, "/api/jpa/query/all", null, "查询");
+
+        // 正式测试（不解析响应为整数）
+        TestStatistics stats = performFormalTest(mockMvc, "/api/jpa/query/all", null, "查询", 3, false);
+
+        // 输出统计
+        stats.printStatistics();
     }
 }

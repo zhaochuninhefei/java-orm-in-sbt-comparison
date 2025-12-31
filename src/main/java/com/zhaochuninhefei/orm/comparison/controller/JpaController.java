@@ -1,5 +1,6 @@
 package com.zhaochuninhefei.orm.comparison.controller;
 
+import com.zhaochuninhefei.orm.comparison.dto.AllQueryResponse;
 import com.zhaochuninhefei.orm.comparison.dto.BatchUpdateRequest;
 import com.zhaochuninhefei.orm.comparison.dto.InsertRequest;
 import com.zhaochuninhefei.orm.comparison.dto.PageQueryRequest;
@@ -88,6 +89,19 @@ public class JpaController {
     public ResponseEntity<PageQueryResponse> pageQuery(@RequestBody PageQueryRequest request) {
         // 执行分页查询操作
         PageQueryResponse response = jpaService.complexPageQuery(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 全表查询API
+     *
+     * @return 全表查询结果
+     */
+    @PostMapping("/query/all")
+    public ResponseEntity<AllQueryResponse> queryAll() {
+        // 执行全表查询操作
+        AllQueryResponse response = jpaService.queryAllConfigDict();
 
         return ResponseEntity.ok(response);
     }

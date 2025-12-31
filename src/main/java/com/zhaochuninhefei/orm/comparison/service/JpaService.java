@@ -1,8 +1,11 @@
 package com.zhaochuninhefei.orm.comparison.service;
 
+import com.zhaochuninhefei.orm.comparison.dto.AllQueryResponse;
 import com.zhaochuninhefei.orm.comparison.dto.PageQueryRequest;
 import com.zhaochuninhefei.orm.comparison.dto.PageQueryResponse;
+import com.zhaochuninhefei.orm.comparison.jpa.entity.ConfigDict;
 import com.zhaochuninhefei.orm.comparison.jpa.entity.UserProfile;
+import com.zhaochuninhefei.orm.comparison.jpa.repository.ConfigDictRepository;
 import com.zhaochuninhefei.orm.comparison.jpa.repository.OrderMainRepository;
 import com.zhaochuninhefei.orm.comparison.jpa.repository.UserProfileRepository;
 import jakarta.persistence.EntityManager;
@@ -27,6 +30,7 @@ public class JpaService {
 
     private final UserProfileRepository userProfileRepository;
     private final OrderMainRepository orderMainRepository;
+    private final ConfigDictRepository configDictRepository;
     private final EntityManager entityManager;
 
     @SuppressWarnings("unused")
@@ -35,10 +39,11 @@ public class JpaService {
 
     private final Random random = new Random();
 
-    public JpaService(UserProfileRepository userProfileRepository, EntityManager entityManager, OrderMainRepository orderMainRepository) {
+    public JpaService(UserProfileRepository userProfileRepository, EntityManager entityManager, OrderMainRepository orderMainRepository, ConfigDictRepository configDictRepository) {
         this.userProfileRepository = userProfileRepository;
         this.entityManager = entityManager;
         this.orderMainRepository = orderMainRepository;
+        this.configDictRepository = configDictRepository;
     }
 
     private static final String[] DEPARTMENTS = {"研发部", "产品部", "市场部", "销售部", "人力资源部", "财务部", "运营部", "客服部"};
@@ -184,6 +189,24 @@ public class JpaService {
         response.setPageNum(request.getPageNum());
         response.setPageSize(request.getPageSize());
         response.setTotalPages((int) Math.ceil((double) total / request.getPageSize()));
+
+        return response;
+    }
+
+    /**
+     * 全表查询配置字典数据
+     *
+     * @return 全表查询响应
+     */
+    @Transactional(readOnly = true)
+    public AllQueryResponse queryAllConfigDict() {
+        // 查询所有配置字典数据
+        List<ConfigDict> records = configDictRepository.findAll();
+
+        // 构建响应
+        AllQueryResponse response = new AllQueryResponse();
+        response.setRecords(records);
+        response.setTotal((long) records.size());
 
         return response;
     }
