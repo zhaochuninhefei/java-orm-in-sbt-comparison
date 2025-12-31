@@ -245,4 +245,18 @@ LIMIT 100 OFFSET 0
 - repository: com.zhaochuninhefei.orm.comparison.jpa.repository
 - entity: com.zhaochuninhefei.orm.comparison.jpa.entity
 
+## b5.全表查询API(JPA)
+使用JPA实现全表查询API，目标表是 config_dict
 
+- uri: /api/jpa/query/all
+- method: POST
+- request body: null
+- response body: 查询结果
+- 描述：全表查询, 目标表是 config_dict
+- 技术栈: JPA + MySQL + SpringBoot
+
+### 包与类设计
+- controller: com.zhaochuninhefei.orm.comparison.controller.JpaController
+- service: com.zhaochuninhefei.orm.comparison.service.JpaService
+- repository: com.zhaochuninhefei.orm.comparison.jpa.repository
+- entity: com.zhaochuninhefei.orm.comparison.jpa.entity

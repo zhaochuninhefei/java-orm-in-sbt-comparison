@@ -1,6 +1,9 @@
-# CLAUDE.md
+# AGENT.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI-Coding-Tools (i.e. Claude-Code, Qoder, Lingma, or others) when working with code in this repository.
+
+## 交流语言
+中文
 
 ## 项目概述
 
