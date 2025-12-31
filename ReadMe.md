@@ -4,6 +4,9 @@ java-orm-in-sbt-comparison
 # 工程介绍
 这是一个用于比较java orm框架的springboot工程。
 
+# 测试报告
+- [JPA与Mybatis的单线程耗时对比结果](./reports/PerformanceCompare-jpa-mybatis-20251231.md)
+
 # 技术栈
 - Java: OpenJDK 25
 - SpringBoot: 4.0.1

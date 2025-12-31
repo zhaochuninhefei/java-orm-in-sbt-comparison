@@ -183,10 +183,10 @@ public class BaseControllerTest {
 
             // 获取结果
             String warmupResponseContent = warmupResult.getResponse().getContentAsString();
-            System.out.println("  - " + operationName + "结果: " + warmupResponseContent);
+            System.out.println("  - " + operationName + "结果: " + displayStr(warmupResponseContent));
         }
 
-        System.out.println("✓ JVM 热机完成");
+        System.out.println("✓ JVM 热机完成 (" + operationName + ")");
         System.out.println();
     }
 
@@ -259,8 +259,7 @@ public class BaseControllerTest {
 
                 // 第一次输出响应内容预览
                 if (i == 0) {
-                    String preview = testResponseContent.substring(0, Math.min(200, testResponseContent.length()));
-                    System.out.println("  - 响应内容预览: " + preview + "...");
+                    System.out.println("  - 响应内容预览: " + displayStr(testResponseContent) + "...");
                 }
             }
 
@@ -273,5 +272,9 @@ public class BaseControllerTest {
         System.out.println();
 
         return stats;
+    }
+
+    private String displayStr(String oriStr) {
+        return oriStr.length() > 20 ? oriStr.substring(0, 20) + "..." : oriStr;
     }
 }

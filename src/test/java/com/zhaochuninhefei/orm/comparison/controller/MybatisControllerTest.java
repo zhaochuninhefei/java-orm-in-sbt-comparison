@@ -35,10 +35,10 @@ class MybatisControllerTest extends BaseControllerTest {
         System.out.println();
 
         // JVM 热机
-        performWarmup(mockMvc, "/api/mybatis/insert", requestBody, "插入");
+        performWarmup(mockMvc, "/api/mybatis/insert", requestBody, "testInsertApiWith10000Records");
 
         // 正式测试
-        TestStatistics stats = performFormalTest(mockMvc, "/api/mybatis/insert", requestBody, "插入", 3);
+        TestStatistics stats = performFormalTest(mockMvc, "/api/mybatis/insert", requestBody, "testInsertApiWith10000Records", 3);
 
         // 验证结果
         for (int i = 0; i < 3; i++) {
@@ -65,10 +65,10 @@ class MybatisControllerTest extends BaseControllerTest {
         System.out.println("========================================");
 
         // JVM 热机
-        performWarmup(mockMvc, "/api/mybatis/update/pk", null, "主键更新");
+        performWarmup(mockMvc, "/api/mybatis/update/pk", null, "testUpdateByPk");
 
         // 正式测试
-        TestStatistics stats = performFormalTest(mockMvc, "/api/mybatis/update/pk", null, "主键更新", 3);
+        TestStatistics stats = performFormalTest(mockMvc, "/api/mybatis/update/pk", null, "testUpdateByPk", 3);
 
         // 验证结果
         for (int i = 0; i < 3; i++) {
@@ -99,10 +99,10 @@ class MybatisControllerTest extends BaseControllerTest {
         System.out.println();
 
         // JVM 热机
-        performWarmup(mockMvc, "/api/mybatis/update/condition", requestBody, "条件更新");
+        performWarmup(mockMvc, "/api/mybatis/update/condition", requestBody, "testUpdateByCondition");
 
         // 正式测试
-        TestStatistics stats = performFormalTest(mockMvc, "/api/mybatis/update/condition", requestBody, "条件更新", 3);
+        TestStatistics stats = performFormalTest(mockMvc, "/api/mybatis/update/condition", requestBody, "testUpdateByCondition", 3);
 
         // 验证结果
         for (int i = 0; i < 3; i++) {
@@ -138,10 +138,10 @@ class MybatisControllerTest extends BaseControllerTest {
         System.out.println();
 
         // JVM 热机
-        performWarmup(mockMvc, "/api/mybatis/query/page", requestBody, "查询");
+        performWarmup(mockMvc, "/api/mybatis/query/page", requestBody, "testPageQuery");
 
         // 正式测试（不解析响应为整数）
-        TestStatistics stats = performFormalTest(mockMvc, "/api/mybatis/query/page", requestBody, "查询", 3, false);
+        TestStatistics stats = performFormalTest(mockMvc, "/api/mybatis/query/page", requestBody, "testPageQuery", 3, false);
 
         // 输出统计
         stats.printStatistics();
@@ -160,10 +160,10 @@ class MybatisControllerTest extends BaseControllerTest {
         System.out.println();
 
         // JVM 热机
-        performWarmup(mockMvc, "/api/mybatis/query/all", null, "查询");
+        performWarmup(mockMvc, "/api/mybatis/query/all", null, "testQueryAll");
 
         // 正式测试（不解析响应为整数）
-        TestStatistics stats = performFormalTest(mockMvc, "/api/mybatis/query/all", null, "查询", 3, false);
+        TestStatistics stats = performFormalTest(mockMvc, "/api/mybatis/query/all", null, "testQueryAll", 3, false);
 
         // 输出统计
         stats.printStatistics();
