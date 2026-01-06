@@ -97,6 +97,7 @@ mvn test -Dtest=DataPrepareControllerTest#testPrepareData
 
 ## 项目设计
 项目设计文档位于目录`designs`下。
+- [测试场景设计](./designs/design-all.md)
 
 ### 数据表设计
 项目包含以下核心数据表:
