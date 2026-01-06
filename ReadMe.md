@@ -22,3 +22,10 @@ mvn -version # 检查JDK版本是不是25
 mvn clean install package
 ```
 也可以直接使用工程根目录下的脚本`mvn_build.sh`。
+
+# 测试场景设计
+- [测试场景设计](./designs/design-all.md)
+
+# AI开发指南
+部分代码基于AI编码工具开发，AI工具开发指南:
+- [AI工具开发指南](./AGENT.md)
