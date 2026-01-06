@@ -24,6 +24,7 @@ java-orm-in-sbt-comparison是一个用于比较java orm框架的springboot工程
 
 # DB设计
 参考 `designs/db/design-db.md`
+- [DB设计](./db/design-db.md)
 
 ## 场景5：分页查询相关表
 
