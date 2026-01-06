@@ -2,8 +2,8 @@ DB设计
 ==========
 
 # SQL文件
-- designs/db/ddl-mysql.sql
-- designs/db/dml-mysql.sql
+- [ddl-mysql](./ddl-mysql.sql)
+- [dml-mysql](./dml-mysql.sql)
 
 # DB说明
 
